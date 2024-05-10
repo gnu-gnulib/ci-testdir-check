@@ -1,0 +1,724 @@
+# A GitHub Actions workflow that builds a package on many platforms.
+
+# Copyright (C) 2024 Free Software Foundation, Inc.
+#
+# This file is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation, either version 3 of the License,
+# or (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Reference documentation for this file:
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+#
+# Syntax of multiline strings in YAML: https://yaml-multiline.info/
+#
+# Customization:
+# - Review and adapt the part of this file before the 'jobs:' line.
+# - You can disable a particular job by adding a line
+#     if: ${{ false }}
+# - You can disable a particular matrix value for a particular job by adding an
+#   'exclude' element to the 'matrix' element, such as:
+#        exclude:
+#          - bitness: 64
+
+name: Produce tarball and make check
+
+on:
+  push:
+  schedule:
+    # Doc: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    # POSIX cron syntax: https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07
+    - cron: '53 4 * * 1'
+
+# Variables.
+env:
+  package: xxxxxxxx
+
+jobs:
+  build-tarball:
+    runs-on: ubuntu-22.04
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      - run: uname -a
+      - run: id
+      - run: env | LC_ALL=C sort
+      - run: pwd
+      # Install Ubuntu packages.
+      # List of packages: https://packages.ubuntu.com/
+      # - run: sudo apt install ...
+      - run: |
+          ./build-tarball.sh '${{ env.package }}'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tarball
+          path: ${{ env.package }}/${{ env.package }}-*.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          overwrite: true
+  # We can run max. 20 "make check" jobs in parallel, max. 5 of them being on macOS.
+  # See https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration
+  check-linux-gnu-ubuntu:
+    name: make check on Ubuntu GNU/Linux
+    needs: build-tarball
+    runs-on: ubuntu-22.04
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      - run: uname -a
+      - run: id
+      - run: env | LC_ALL=C sort
+      - run: pwd
+      # Install Ubuntu packages.
+      # List of packages: https://packages.ubuntu.com/
+      # - run: sudo apt install ...
+      - run: |
+          pwd
+          export CPPFLAGS="-Wall"
+          ./build-on.sh '${{ env.package }}' '' 'make'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-linux-gnu-ubuntu
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
+  check-linux-gnu-centos:
+    name: make check on CentOS GNU/Linux
+    needs: build-tarball
+    runs-on: ubuntu-22.04
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: centos:7
+          options: -v ${{ github.workspace }}:/work
+          run: |
+            uname -a
+            id
+            env | LC_ALL=C sort
+            pwd
+            : "Install CentOS Linux packages"
+            : "List of packages: http://mirror.centos.org/centos/7/os/x86_64/Packages/"
+            yum -y install make gcc
+            cd /work
+            ls -l
+            export CPPFLAGS="-Wall"
+            ./build-on.sh '${{ env.package }}' '' 'make'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-linux-gnu-centos
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
+  check-linux-alpine:
+    name: make check on Alpine Linux
+    needs: build-tarball
+    runs-on: ubuntu-22.04
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: alpine:3
+          options: -v ${{ github.workspace }}:/work
+          run: |
+            uname -a
+            id
+            env | LC_ALL=C sort
+            pwd
+            : "Install Alpine Linux packages"
+            : "List of packages: https://pkgs.alpinelinux.org/packages"
+            apk add make gcc musl-dev
+            cd /work
+            ls -l
+            export CPPFLAGS="-Wall"
+            ./build-on.sh '${{ env.package }}' '' 'make'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-linux-alpine
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
+  check-macos:
+    name: make check on macOS
+    needs: build-tarball
+    # Doc: https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-11, macos-12, macos-13, macos-14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      - run: uname -a
+      - run: id
+      - run: env | LC_ALL=C sort
+      - run: pwd
+      # Install Homebrew packages.
+      # List of packages: https://formulae.brew.sh/
+      # - run: brew install ...
+      - run: |
+          pwd
+          export CPPFLAGS="-Wall"
+          ./build-on.sh '${{ env.package }}' '' 'make'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ matrix.os }}
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
+  check-freebsd:
+    name: make check on FreeBSD
+    needs: build-tarball
+    # The FreeBSD runners sometimes get stuck.
+    timeout-minutes: 15
+    runs-on: ubuntu-22.04
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      # Doc: https://github.com/vmactions/freebsd-vm
+      - uses: vmactions/freebsd-vm@v1
+        with:
+          release: '14.0'
+          mem: 1024
+          usesh: true
+          run: |
+            set -x
+            uname -a
+            id
+            env | LC_ALL=C sort
+            pwd
+            : "Install FreeBSD packages"
+            : "List of packages: https://ports.freebsd.org/cgi/ports.cgi"
+            : pkg install -y ...
+            ls -l
+            export CPPFLAGS="-I/usr/local/include -Wall"
+            export LDFLAGS="-L/usr/local/lib"
+            ./build-on.sh '${{ env.package }}' '' 'make'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-freebsd
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
+  check-netbsd:
+    name: make check on NetBSD
+    needs: build-tarball
+    runs-on: ubuntu-22.04
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      # Doc: https://github.com/vmactions/netbsd-vm
+      - uses: vmactions/netbsd-vm@v1
+        with:
+          release: '10.0'
+          mem: 1024
+          usesh: true
+          run: |
+            set -x
+            uname -a
+            id
+            env | LC_ALL=C sort
+            pwd
+            : "Install NetBSD packages"
+            : "List of packages: https://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/index-all.html"
+            : pkg_add ...
+            : "or"
+            : pkg_add pkgin
+            : pkgin install ...
+            ls -l
+            export CPPFLAGS="-I/usr/pkg/include -Wall"
+            export LDFLAGS="-L/usr/pkg/lib"
+            ./build-on.sh '${{ env.package }}' '' 'make'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-netbsd
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
+  check-openbsd:
+    name: make check on OpenBSD
+    needs: build-tarball
+    runs-on: ubuntu-22.04
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      # Doc: https://github.com/vmactions/openbsd-vm
+      - uses: vmactions/openbsd-vm@v1
+        with:
+          release: '7.5'
+          mem: 1024
+          usesh: true
+          sync: sshfs
+          run: |
+            set -x
+            uname -a
+            id
+            env | LC_ALL=C sort
+            pwd
+            : "Install OpenBSD packages"
+            : "List of packages: https://cdn.openbsd.org/pub/OpenBSD/7.5/packages/amd64/"
+            : pkg_add ...
+            ls -l
+            export CPPFLAGS="-I/usr/local/include -Wall"
+            export LDFLAGS="-L/usr/local/lib"
+            ./build-on.sh '${{ env.package }}' '' 'make'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-openbsd
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
+  check-solaris11:
+    name: make check on Solaris 11
+    needs: build-tarball
+    runs-on: ubuntu-22.04
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      # Doc: https://github.com/vmactions/solaris-vm
+      - uses: vmactions/solaris-vm@v1
+        with:
+          # This image has gcc installed in /opt/csw/bin.
+          release: '11.4-gcc'
+          mem: 2048
+          #prepare: |
+          #  : "Install Solaris packages"
+          #  : "List of packages: http://pkg.oracle.com/solaris/release/en/index.shtml"
+          #  pkg install ...
+          run: |
+            set -x
+            uname -a
+            id
+            env | LC_ALL=C sort
+            pwd
+            ls -l
+            export CPPFLAGS="-Wall"
+            ./build-on.sh '${{ env.package }}' '' 'make'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-solaris11
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
+  check-solaris11-omnios:
+    name: make check on Solaris 11 OmniOS
+    needs: build-tarball
+    runs-on: ubuntu-22.04
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      # Doc: https://github.com/vmactions/omnios-vm
+      - uses: vmactions/omnios-vm@v1
+        with:
+          release: "r151048"
+          mem: 2048
+          prepare: |
+            : "Install Solaris packages"
+            : "List of packages: https://pkg.omnios.org/r151048/core/en/index.shtml"
+            pkg install \
+                developer/gcc13 developer/object-file system/header system/library/math \
+                developer/build/gnu-make
+          run: |
+            set -x
+            uname -a
+            id
+            env | LC_ALL=C sort
+            pwd
+            ls -l
+            export CPPFLAGS="-Wall"
+            ./build-on.sh '${{ env.package }}' '' 'gmake'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-solaris11-omnios
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
+  check-cygwin:
+    name: make check on Cygwin
+    needs: build-tarball
+    # Doc: https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+    strategy:
+      fail-fast: false
+      matrix:
+        bitness: [32, 64]
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
+    env:
+      CYGWIN_NOWINPATH: 1
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      # Doc: https://github.com/cygwin/cygwin-install-action
+      - uses: cygwin/cygwin-install-action@v4
+        with:
+          platform: ${{ matrix.bitness == 32 && 'x86' || 'x86_64' }}
+          # Install Cygwin packages.
+          # List of packages: https://cygwin.com/packages/package_list.html
+          packages: gcc-core make
+      - name: cygcheck
+        run: cygcheck -V
+      - name: cygcheck
+        run: cygcheck -s -r
+      - name: Windows version
+        run: cmd /c ver
+      - run: uname -a
+      - run: id
+      - run: env | LC_ALL=C sort
+      - run: pwd
+      - run: ls -l
+      - run: echo "$PATH"
+      - run: ls -l /usr/bin
+      # Convert the shell script, that the Windows 'git' port has checked out
+      # with CR-LF newlines, back to Unix newlines.
+      - run: sed -i -e 's/\r$//' build-on.sh
+      - name: Build in Cygwin
+        run: |
+          export CPPFLAGS="-Wall"
+          ./build-on.sh '${{ env.package }}' '' 'make'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-cygwin${{ matrix.bitness }}
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
+  check-mingw:
+    name: make check on mingw
+    needs: build-tarball
+    # Doc: https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+    strategy:
+      fail-fast: false
+      matrix:
+        bitness: [32, 64]
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
+    env:
+      CYGWIN_NOWINPATH: 1
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      # Doc: https://github.com/cygwin/cygwin-install-action
+      - uses: cygwin/cygwin-install-action@v4
+        with:
+          platform: x86_64
+          # Install Cygwin packages.
+          # List of packages: https://cygwin.com/packages/package_list.html
+          packages: ${{ matrix.bitness == 32 && 'mingw64-i686-gcc-core mingw64-i686-headers mingw64-i686-runtime' || 'mingw64-x86_64-gcc-core mingw64-x86_64-headers mingw64-x86_64-runtime' }} make
+      - name: cygcheck
+        run: cygcheck -V
+      - name: cygcheck
+        run: cygcheck -s -r
+      - name: Windows version
+        run: cmd /c ver
+      - run: uname -a
+      - run: id
+      - run: env | LC_ALL=C sort
+      - run: pwd
+      - run: ls -l
+      - run: echo "$PATH"
+      - run: ls -l /usr/bin
+      # Convert the shell script, that the Windows 'git' port has checked out
+      # with CR-LF newlines, back to Unix newlines.
+      - run: sed -i -e 's/\r$//' build-on.sh
+      - name: Build in Cygwin
+        run: |
+          set -x
+          PATH=/usr/${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32/sys-root/mingw/bin:$PATH
+          export CPPFLAGS="-Wall"
+          export CC=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32-gcc
+          ./build-on.sh '${{ env.package }}' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-mingw${{ matrix.bitness }}
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
+  check-msvc:
+    name: make check on MSVC
+    needs: build-tarball
+    # Doc: https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+    strategy:
+      fail-fast: false
+      matrix:
+        bitness: [32, 64]
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
+    env:
+      CYGWIN_NOWINPATH: 1
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      # Doc: https://github.com/ilammy/msvc-dev-cmd
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.bitness == 32 && 'x86' || 'x64' }}
+      # Doc: https://github.com/cygwin/cygwin-install-action
+      - uses: cygwin/cygwin-install-action@v4
+        with:
+          platform: x86_64
+          # Install Cygwin packages.
+          # List of packages: https://cygwin.com/packages/package_list.html
+          packages: wget make
+      - name: cygcheck
+        run: cygcheck -V
+      - name: cygcheck
+        run: cygcheck -s -r
+      - name: Windows version
+        run: cmd /c ver
+      - run: uname -a
+      - run: id
+      - run: env | LC_ALL=C sort
+      - run: pwd
+      - run: ls -l
+      - run: echo "$PATH"
+      - run: ls -l /usr/bin
+      # Convert the shell script, that the Windows 'git' port has checked out
+      # with CR-LF newlines, back to Unix newlines.
+      - run: sed -i -e 's/\r$//' build-on.sh
+      - run: |
+          wget -O ar-lib 'https://git.savannah.gnu.org/gitweb/?p=automake.git;a=blob_plain;f=lib/ar-lib;hb=HEAD'
+          wget -O compile 'https://git.savannah.gnu.org/gitweb/?p=automake.git;a=blob_plain;f=lib/compile;hb=HEAD'
+          chmod a+x ar-lib compile
+      - name: Build in Cygwin
+        env:
+          arch: ${{ matrix.bitness == 32 && 'x86' || 'x64' }}
+          pathelementsuffix: ${{ matrix.bitness == 64 && '/amd64' || '' }}
+          libelementsuffix: ${{ matrix.bitness == 64 && '\amd64' || '' }}
+        run: |
+          set -x
+          : "Windows C library headers and libraries."
+          WindowsCrtIncludeDir='C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt'
+          WindowsCrtLibDir='C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\ucrt\'
+          INCLUDE="${WindowsCrtIncludeDir};$INCLUDE"
+          LIB="${WindowsCrtLibDir}${arch};$LIB"
+          : "Windows API headers and libraries."
+          WindowsSdkIncludeDir='C:\Program Files (x86)\Windows Kits\8.1\Include\'
+          WindowsSdkLibDir='C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\'
+          INCLUDE="${WindowsSdkIncludeDir}um;${WindowsSdkIncludeDir}shared;$INCLUDE"
+          LIB="${WindowsSdkLibDir}${arch};$LIB"
+          : "Visual C++ tools, headers and libraries."
+          VSINSTALLDIR='C:\Program Files (x86)\Microsoft Visual Studio 14.0'
+          VCINSTALLDIR="${VSINSTALLDIR}"'\VC'
+          PATH=`cygpath -u "${VCINSTALLDIR}"`/bin${pathelementsuffix}:"$PATH"
+          INCLUDE="${VCINSTALLDIR}"'\include;'"${INCLUDE}"
+          LIB="${VCINSTALLDIR}"'\lib${libelementsuffix};'"${LIB}"
+          export INCLUDE LIB
+          : "Possible values are _WIN32_WINNT_WINXP, _WIN32_WINNT_VISTA, _WIN32_WINNT_WIN7"
+          win32_target=_WIN32_WINNT_WINXP
+          export CPPFLAGS="-D_WIN32_WINNT=$win32_target"
+          export CC="`pwd`/compile cl -nologo"; export CFLAGS="-MD"
+          export LD="link"
+          export NM="dumpbin -symbols"
+          export STRIP=":"
+          export AR="`pwd`/ar-lib lib"
+          export RANLIB=":"
+          ./build-on.sh '${{ env.package }}' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-msvc${{ matrix.bitness }}
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
+  # This is not a platform-specific test, but very useful for finding bugs.
+  check-sanitized:
+    name: make check with sanitizers
+    needs: build-tarball
+    runs-on: ubuntu-22.04
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      - run: uname -a
+      - run: id
+      - run: env | LC_ALL=C sort
+      - run: pwd
+      # Install Ubuntu packages.
+      # List of packages: https://packages.ubuntu.com/
+      # - run: sudo apt install ...
+      - run: |
+          pwd
+          export CPPFLAGS="-Wall"
+          export CC="clang -fsanitize=address,undefined,signed-integer-overflow,shift,integer-divide-by-zero"
+          export CFLAGS="-O0 -fno-omit-frame-pointer -ggdb"
+          export ASAN_OPTIONS="detect_leaks=0 abort_on_error=1 allocator_may_return_null=1"
+          ./build-on.sh '${{ env.package }}' '' 'make'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-sanitized
+          path: |
+            ${{ env.package }}-*/config.cache
+            ${{ env.package }}-*/config.log
+            ${{ env.package }}-*/config.status
+            ${{ env.package }}-*/log[123]
+          retention-days: 7
+          overwrite: true
