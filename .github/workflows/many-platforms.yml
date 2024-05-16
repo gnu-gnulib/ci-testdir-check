@@ -57,6 +57,18 @@ jobs:
       # - run: sudo apt install ...
       - run: |
           ./build-tarball.sh '${{ env.package }}'
+      # Doc: https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-build-tarball-failed
+          path: |
+            ${{ env.package }}/config.cache
+            ${{ env.package }}/config.log
+            ${{ env.package }}/config.status
+            ${{ env.package }}/log[1234]
+          retention-days: 7
+          overwrite: true
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - uses: actions/upload-artifact@v4
@@ -99,10 +111,10 @@ jobs:
         with:
           name: logs-linux-gnu-ubuntu
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
   check-linux-gnu-centos:
@@ -140,10 +152,10 @@ jobs:
         with:
           name: logs-linux-gnu-centos
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
   check-linux-alpine:
@@ -181,10 +193,10 @@ jobs:
         with:
           name: logs-linux-alpine
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
   check-macos:
@@ -222,10 +234,10 @@ jobs:
         with:
           name: logs-${{ matrix.os }}
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
   check-freebsd:
@@ -268,10 +280,10 @@ jobs:
         with:
           name: logs-freebsd
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
   check-netbsd:
@@ -300,9 +312,9 @@ jobs:
             pwd
             : "Install NetBSD packages"
             : "List of packages: https://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/index-all.html"
-            : pkg_add ...
+            : /usr/sbin/pkg_add ...
             : "or"
-            : pkg_add pkgin
+            : /usr/sbin/pkg_add pkgin
             : pkgin install ...
             ls -l
             export CPPFLAGS="-I/usr/pkg/include -Wall"
@@ -315,10 +327,10 @@ jobs:
         with:
           name: logs-netbsd
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
   check-openbsd:
@@ -339,7 +351,11 @@ jobs:
           release: '7.5'
           mem: 1024
           usesh: true
-          sync: sshfs
+          # Avoid 'sync: sshfs' since it causes trouble with file timestamps
+          # and errors from chown() calls:
+          # - BSD tar error messages for r--r--r-- files: "tar: Unable to create ...: Permission denied"
+          # - GNU tar warnings "Cannot change ownership to uid 0, gid 0: Permission denied"
+          #sync: sshfs
           run: |
             set -x
             uname -a
@@ -360,10 +376,10 @@ jobs:
         with:
           name: logs-openbsd
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
   check-solaris11:
@@ -381,7 +397,9 @@ jobs:
       # Doc: https://github.com/vmactions/solaris-vm
       - uses: vmactions/solaris-vm@v1
         with:
-          # This image has gcc installed in /opt/csw/bin.
+          # We can choose among
+          # - the '11.4' image and installing gcc from the Oracle packages site, or
+          # - the '11.4-gcc' image, that has gcc installed in /opt/csw/bin.
           release: '11.4-gcc'
           mem: 2048
           #prepare: |
@@ -396,6 +414,7 @@ jobs:
             pwd
             ls -l
             export CPPFLAGS="-Wall"
+            export CC="gcc -m64"
             ./build-on.sh '${{ env.package }}' '' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
@@ -404,10 +423,10 @@ jobs:
         with:
           name: logs-solaris11
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
   check-solaris11-omnios:
@@ -449,10 +468,10 @@ jobs:
         with:
           name: logs-solaris11-omnios
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
   check-cygwin:
@@ -511,10 +530,10 @@ jobs:
         with:
           name: logs-cygwin${{ matrix.bitness }}
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
   check-mingw:
@@ -576,10 +595,10 @@ jobs:
         with:
           name: logs-mingw${{ matrix.bitness }}
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
   check-msvc:
@@ -676,10 +695,10 @@ jobs:
         with:
           name: logs-msvc${{ matrix.bitness }}
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
   # This is not a platform-specific test, but very useful for finding bugs.
@@ -716,9 +735,9 @@ jobs:
         with:
           name: logs-sanitized
           path: |
-            ${{ env.package }}-*/config.cache
-            ${{ env.package }}-*/config.log
-            ${{ env.package }}-*/config.status
-            ${{ env.package }}-*/log[123]
+            ${{ env.package }}-*/build/config.cache
+            ${{ env.package }}-*/build/config.log
+            ${{ env.package }}-*/build/config.status
+            ${{ env.package }}-*/build/log[123]
           retention-days: 7
           overwrite: true
