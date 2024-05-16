@@ -25,10 +25,11 @@ make="$3"
 set -x
 
 # Unpack the tarball.
-tarfile=`echo "$package"-*.tar.gz`
+tarfile="$package".tar.gz
 packagedir=`echo "$tarfile" | sed -e 's/\.tar\.gz$//'`
 tar xfz "$tarfile"
-cd "$packagedir" || exit 1
+test "$packagedir" = testdir-all || mv "$packagedir" testdir-all
+cd testdir-all || exit 1
 
 mkdir build
 cd build

@@ -36,7 +36,7 @@ on:
   schedule:
     # Doc: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     # POSIX cron syntax: https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07
-    - cron: '53 4 * * 1'
+    - cron: '17 2 * * 1'
 
 # Variables.
 env:
@@ -63,10 +63,9 @@ jobs:
         with:
           name: logs-build-tarball-failed
           path: |
-            ${{ env.package }}/config.cache
-            ${{ env.package }}/config.log
-            ${{ env.package }}/config.status
-            ${{ env.package }}/log[1234]
+            testdir-all/config.cache
+            testdir-all/config.log
+            testdir-all/config.status
           retention-days: 7
           overwrite: true
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
@@ -74,7 +73,15 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: tarball
-          path: ${{ env.package }}/${{ env.package }}-*.tar.gz
+          path: testdir-all.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          overwrite: true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tarball-for-mingw
+          path: testdir-all-for-mingw.tar.gz
           if-no-files-found: error
           retention-days: 7
           compression-level: 0
@@ -103,7 +110,7 @@ jobs:
       - run: |
           pwd
           export CPPFLAGS="-Wall"
-          ./build-on.sh '${{ env.package }}' '' 'make'
+          ./build-on.sh 'testdir-all' '' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -111,10 +118,10 @@ jobs:
         with:
           name: logs-linux-gnu-ubuntu
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true
   check-linux-gnu-centos:
@@ -144,7 +151,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh '${{ env.package }}' '' 'make'
+            ./build-on.sh 'testdir-all' '' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -152,10 +159,10 @@ jobs:
         with:
           name: logs-linux-gnu-centos
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true
   check-linux-alpine:
@@ -185,7 +192,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh '${{ env.package }}' '' 'make'
+            ./build-on.sh 'testdir-all' '' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -193,10 +200,10 @@ jobs:
         with:
           name: logs-linux-alpine
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true
   check-macos:
@@ -226,7 +233,7 @@ jobs:
       - run: |
           pwd
           export CPPFLAGS="-Wall"
-          ./build-on.sh '${{ env.package }}' '' 'make'
+          ./build-on.sh 'testdir-all' '' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -234,10 +241,10 @@ jobs:
         with:
           name: logs-${{ matrix.os }}
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true
   check-freebsd:
@@ -272,7 +279,7 @@ jobs:
             ls -l
             export CPPFLAGS="-I/usr/local/include -Wall"
             export LDFLAGS="-L/usr/local/lib"
-            ./build-on.sh '${{ env.package }}' '' 'make'
+            ./build-on.sh 'testdir-all' '' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -280,10 +287,10 @@ jobs:
         with:
           name: logs-freebsd
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true
   check-netbsd:
@@ -319,7 +326,7 @@ jobs:
             ls -l
             export CPPFLAGS="-I/usr/pkg/include -Wall"
             export LDFLAGS="-L/usr/pkg/lib"
-            ./build-on.sh '${{ env.package }}' '' 'make'
+            ./build-on.sh 'testdir-all' '' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -327,10 +334,10 @@ jobs:
         with:
           name: logs-netbsd
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true
   check-openbsd:
@@ -368,7 +375,7 @@ jobs:
             ls -l
             export CPPFLAGS="-I/usr/local/include -Wall"
             export LDFLAGS="-L/usr/local/lib"
-            ./build-on.sh '${{ env.package }}' '' 'make'
+            ./build-on.sh 'testdir-all' '' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -376,10 +383,10 @@ jobs:
         with:
           name: logs-openbsd
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true
   check-solaris11:
@@ -415,7 +422,7 @@ jobs:
             ls -l
             export CPPFLAGS="-Wall"
             export CC="gcc -m64"
-            ./build-on.sh '${{ env.package }}' '' 'make'
+            ./build-on.sh 'testdir-all' '' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -423,10 +430,10 @@ jobs:
         with:
           name: logs-solaris11
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true
   check-solaris11-omnios:
@@ -460,7 +467,7 @@ jobs:
             pwd
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh '${{ env.package }}' '' 'gmake'
+            ./build-on.sh 'testdir-all' '' 'gmake'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -468,10 +475,10 @@ jobs:
         with:
           name: logs-solaris11-omnios
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true
   check-cygwin:
@@ -522,7 +529,7 @@ jobs:
       - name: Build in Cygwin
         run: |
           export CPPFLAGS="-Wall"
-          ./build-on.sh '${{ env.package }}' '' 'make'
+          ./build-on.sh 'testdir-all' '' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -530,10 +537,10 @@ jobs:
         with:
           name: logs-cygwin${{ matrix.bitness }}
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true
   check-mingw:
@@ -557,7 +564,7 @@ jobs:
       # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
       - uses: actions/download-artifact@v4
         with:
-          name: tarball
+          name: tarball-for-mingw
       # Doc: https://github.com/cygwin/cygwin-install-action
       - uses: cygwin/cygwin-install-action@v4
         with:
@@ -587,7 +594,7 @@ jobs:
           PATH=/usr/${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32/sys-root/mingw/bin:$PATH
           export CPPFLAGS="-Wall"
           export CC=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32-gcc
-          ./build-on.sh '${{ env.package }}' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make'
+          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -595,10 +602,10 @@ jobs:
         with:
           name: logs-mingw${{ matrix.bitness }}
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true
   check-msvc:
@@ -622,7 +629,7 @@ jobs:
       # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
       - uses: actions/download-artifact@v4
         with:
-          name: tarball
+          name: tarball-for-mingw
       # Doc: https://github.com/ilammy/msvc-dev-cmd
       - uses: ilammy/msvc-dev-cmd@v1
         with:
@@ -687,7 +694,7 @@ jobs:
           export STRIP=":"
           export AR="`pwd`/ar-lib lib"
           export RANLIB=":"
-          ./build-on.sh '${{ env.package }}' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make'
+          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -695,10 +702,10 @@ jobs:
         with:
           name: logs-msvc${{ matrix.bitness }}
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true
   # This is not a platform-specific test, but very useful for finding bugs.
@@ -727,7 +734,7 @@ jobs:
           export CC="clang -fsanitize=address,undefined,signed-integer-overflow,shift,integer-divide-by-zero"
           export CFLAGS="-O0 -fno-omit-frame-pointer -ggdb"
           export ASAN_OPTIONS="detect_leaks=0 abort_on_error=1 allocator_may_return_null=1"
-          ./build-on.sh '${{ env.package }}' '' 'make'
+          ./build-on.sh 'testdir-all' '' 'make'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -735,9 +742,9 @@ jobs:
         with:
           name: logs-sanitized
           path: |
-            ${{ env.package }}-*/build/config.cache
-            ${{ env.package }}-*/build/config.log
-            ${{ env.package }}-*/build/config.status
-            ${{ env.package }}-*/build/log[123]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
           retention-days: 7
           overwrite: true

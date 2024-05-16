@@ -17,7 +17,9 @@
 
 # This script builds the package.
 # Usage: build-tarball.sh PACKAGE
-# Its output is a tarball: $package/$package-*.tar.gz
+# Its output is two tarballs:
+#   - testdir-all.tar.gz
+#   - testdir-all-for-mingw.tar.gz
 
 package="$1"
 
@@ -26,17 +28,14 @@ set -e
 # Fetch sources (uses package 'git').
 git clone --depth 1 https://git.savannah.gnu.org/git/"$package".git
 cd "$package"
-./autopull.sh --one-time
 
-# Fetch extra files and generate files (uses packages wget, python3, automake, autoconf, m4).
-date=`date --utc --iso-8601 | sed -e 's/-//g'`; sed -i -e "/AM_INIT_AUTOMAKE/s/\\([0-9][0-9.]*\\)/\\1-${date}/" configure.ac
-./autogen.sh
+rm -rf ../testdir-all
+./gnulib-tool --create-testdir --dir=../testdir-all --with-c++-tests --without-privileged-tests --single-configure `./all-modules`
 
-# Configure (uses package 'file').
-./configure --config-cache CPPFLAGS="-Wall" > log1 2>&1; rc=$?; cat log1; test $rc = 0 || exit 1
-# Build (uses packages make, gcc, ...).
-make > log2 2>&1; rc=$?; cat log2; test $rc = 0 || exit 1
-# Run the tests.
-make check > log3 2>&1; rc=$?; cat log3; test $rc = 0 || exit 1
-# Check that tarballs are correct.
-make distcheck > log4 2>&1; rc=$?; cat log4; test $rc = 0 || exit 1
+rm -rf ../testdir-all-for-mingw
+./gnulib-tool --create-testdir --dir=../testdir-all-for-mingw --with-c++-tests --without-privileged-tests --single-configure `./all-modules --for-msvc`
+
+cd ..
+
+tar cfz testdir-all.tar.gz testdir-all
+tar cfz testdir-all-for-mingw.tar.gz testdir-all-for-mingw
