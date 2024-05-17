@@ -122,6 +122,7 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
   check-linux-gnu-centos:
@@ -163,6 +164,7 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
   check-linux-alpine:
@@ -204,6 +206,7 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
   check-macos:
@@ -245,6 +248,7 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
   check-freebsd:
@@ -291,6 +295,7 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
   check-netbsd:
@@ -338,6 +343,7 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
   check-openbsd:
@@ -387,6 +393,7 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
   check-solaris11:
@@ -435,6 +442,7 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
   check-solaris11-omnios:
@@ -480,6 +488,7 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
   check-cygwin:
@@ -542,6 +551,7 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
   check-mingw:
@@ -608,6 +618,7 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
   check-msvc:
@@ -709,6 +720,7 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
   # This is not a platform-specific test, but very useful for finding bugs.
@@ -751,5 +763,6 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[123]
+            testdir-all/build/gltests/test-suite.log
           retention-days: 7
           overwrite: true
