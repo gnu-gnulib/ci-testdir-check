@@ -29,6 +29,9 @@ set -e
 git clone --depth 1 https://git.savannah.gnu.org/git/"$package".git
 cd "$package"
 
+# Let the tests continue after the first test failure.
+sed -i -e '/abort/d' gltests/macros.h
+
 rm -rf ../testdir-all
 ./gnulib-tool --create-testdir --dir=../testdir-all --with-c++-tests --without-privileged-tests --single-configure `./all-modules`
 
