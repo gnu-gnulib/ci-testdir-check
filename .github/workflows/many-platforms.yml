@@ -414,6 +414,7 @@ jobs:
           # We can choose among
           # - the '11.4' image and installing gcc from the Oracle packages site, or
           # - the '11.4-gcc' image, that has gcc installed in /opt/csw/bin.
+          #   Note: Somehow it does not declare the renameat() function.
           release: '11.4'
           mem: 2048
           prepare: |
