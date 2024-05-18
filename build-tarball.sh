@@ -30,10 +30,10 @@ git clone --depth 1 https://git.savannah.gnu.org/git/"$package".git
 cd "$package"
 
 rm -rf ../testdir-all
-./gnulib-tool --create-testdir --dir=../testdir-all --with-c++-tests --without-privileged-tests --single-configure `./all-modules`
+./gnulib-tool --create-testdir --dir=../testdir-all --with-c++-tests --without-privileged-tests --single-configure `./all-modules` --avoid=endian
 
 rm -rf ../testdir-all-for-mingw
-./gnulib-tool --create-testdir --dir=../testdir-all-for-mingw --with-c++-tests --without-privileged-tests --single-configure `./all-modules --for-msvc`
+./gnulib-tool --create-testdir --dir=../testdir-all-for-mingw --with-c++-tests --without-privileged-tests --single-configure `./all-modules --for-msvc` --avoid=endian
 
 cd ..
 
