@@ -35,6 +35,7 @@ mkdir build
 cd build
 
 # Configure.
+CPPFLAGS="$CPPFLAGS -DCONTINUE_AFTER_ASSERT" \
 FORCE_UNSAFE_CONFIGURE=1 ../configure --config-cache --with-included-libunistring $configure_options > log1 2>&1; rc=$?; cat log1; test $rc = 0 || exit 1
 
 # Build.
