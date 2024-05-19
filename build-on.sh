@@ -16,12 +16,13 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # This script builds a tarball of the package on a single platform.
-# Usage: build-on.sh PACKAGE CONFIGURE_OPTIONS MAKE
+# Usage: build-on.sh PACKAGE CONFIGURE_OPTIONS MAKE PREFIX PREREQUISITES
 
 package="$1"
 configure_options="$2"
 make="$3"
-prerequisites="$4"
+prefix="$4"
+prerequisites="$5"
 
 set -x
 
@@ -29,7 +30,7 @@ set -x
 for prereq in $prerequisites; do
   tar xfz $prereq.tar.gz
   cd $prereq
-  ./configure $configure_options > log1 2>&1; rc=$?; cat log1; test $rc = 0 || exit 1
+  ./configure $configure_options --prefix="$prefix" > log1 2>&1; rc=$?; cat log1; test $rc = 0 || exit 1
   $make > log2 2>&1; rc=$?; cat log2; test $rc = 0 || exit 1
   $make install > log4 2>&1; rc=$?; cat log4; test $rc = 0 || exit 1
   cd ..
