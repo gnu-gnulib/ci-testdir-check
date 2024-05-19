@@ -763,13 +763,14 @@ jobs:
       # - run: sudo apt install ...
       - run: |
           pwd
-          export CPPFLAGS="-Wall"
+          export CPPFLAGS="-I$HOME/include -Wall"
+          export LDFLAGS="-L$HOME/lib"
           export CC="clang -fsanitize=address,undefined,signed-integer-overflow,shift,integer-divide-by-zero"
           export CFLAGS="-O0 -fno-omit-frame-pointer -ggdb"
           export CXX="clang++ -fsanitize=address,undefined,signed-integer-overflow,shift,integer-divide-by-zero"
           export CXXFLAGS="-O0 -fno-omit-frame-pointer -ggdb"
           export ASAN_OPTIONS="detect_leaks=0 abort_on_error=1 allocator_may_return_null=1"
-          ./build-on.sh 'testdir-all' '' 'make' "$HOME" ''
+          ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
