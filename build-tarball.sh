@@ -34,11 +34,16 @@ tar cfz libbacktrace.tar.gz libbacktrace
 git clone --depth 1 https://git.savannah.gnu.org/git/"$package".git
 cd "$package"
 
+# List of modules to avoid.
+avoids=
+# This test exhibits spurious failures on FreeBSD, NetBSD, OpenBSD.
+avoids="$avoids nonblocking-socket-tests"
+
 rm -rf ../testdir-all
-./gnulib-tool --create-testdir --dir=../testdir-all --with-c++-tests --without-privileged-tests --single-configure `./all-modules` --avoid=endian
+./gnulib-tool --create-testdir --dir=../testdir-all --with-c++-tests --without-privileged-tests --single-configure `./all-modules` `for m in $avoids; do echo " --avoid=$m"`
 
 rm -rf ../testdir-all-for-mingw
-./gnulib-tool --create-testdir --dir=../testdir-all-for-mingw --with-c++-tests --without-privileged-tests --single-configure `./all-modules --for-msvc` --avoid=endian
+./gnulib-tool --create-testdir --dir=../testdir-all-for-mingw --with-c++-tests --without-privileged-tests --single-configure `./all-modules --for-msvc` `for m in $avoids; do echo " --avoid=$m"`
 
 cd ..
 
