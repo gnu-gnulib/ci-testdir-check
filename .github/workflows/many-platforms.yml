@@ -73,7 +73,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: tarball
-          path: testdir-all.tar.gz
+          path: |
+            libbacktrace.tar.gz
+            testdir-all.tar.gz
           if-no-files-found: error
           retention-days: 7
           compression-level: 0
@@ -81,7 +83,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: tarball-for-mingw
-          path: testdir-all-for-mingw.tar.gz
+          path: |
+            libbacktrace.tar.gz
+            testdir-all-for-mingw.tar.gz
           if-no-files-found: error
           retention-days: 7
           compression-level: 0
@@ -110,7 +114,7 @@ jobs:
       - run: |
           pwd
           export CPPFLAGS="-Wall"
-          ./build-on.sh 'testdir-all' '' 'make'
+          ./build-on.sh 'testdir-all' '' 'make' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -118,6 +122,7 @@ jobs:
         with:
           name: logs-linux-gnu-ubuntu
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status
@@ -152,7 +157,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'make'
+            ./build-on.sh 'testdir-all' '' 'make' 'libbacktrace'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -160,6 +165,7 @@ jobs:
         with:
           name: logs-linux-gnu-centos
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status
@@ -194,7 +200,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'make'
+            ./build-on.sh 'testdir-all' '' 'make' 'libbacktrace'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -202,6 +208,7 @@ jobs:
         with:
           name: logs-linux-alpine
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status
@@ -236,7 +243,7 @@ jobs:
       - run: |
           pwd
           export CPPFLAGS="-Wall"
-          ./build-on.sh 'testdir-all' '' 'make'
+          ./build-on.sh 'testdir-all' '' 'make' 'libbacktrace'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -244,6 +251,7 @@ jobs:
         with:
           name: logs-${{ matrix.os }}
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status
@@ -279,11 +287,11 @@ jobs:
             pwd
             : "Install FreeBSD packages"
             : "List of packages: https://ports.freebsd.org/cgi/ports.cgi"
-            : pkg install -y ...
+            pkg install -y libbacktrace
             ls -l
             export CPPFLAGS="-I/usr/local/include -Wall"
             export LDFLAGS="-L/usr/local/lib"
-            ./build-on.sh 'testdir-all' '' 'make'
+            ./build-on.sh 'testdir-all' '' 'make' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -291,6 +299,7 @@ jobs:
         with:
           name: logs-freebsd
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status
@@ -331,7 +340,7 @@ jobs:
             ls -l
             export CPPFLAGS="-I/usr/pkg/include -Wall"
             export LDFLAGS="-L/usr/pkg/lib"
-            ./build-on.sh 'testdir-all' '' 'make'
+            ./build-on.sh 'testdir-all' '' 'make' 'libbacktrace'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -339,6 +348,7 @@ jobs:
         with:
           name: logs-netbsd
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status
@@ -381,7 +391,7 @@ jobs:
             ls -l
             export CPPFLAGS="-I/usr/local/include -Wall"
             export LDFLAGS="-L/usr/local/lib"
-            ./build-on.sh 'testdir-all' '' 'gmake'
+            ./build-on.sh 'testdir-all' '' 'gmake' 'libbacktrace'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -389,6 +399,7 @@ jobs:
         with:
           name: logs-openbsd
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status
@@ -431,7 +442,7 @@ jobs:
             export CPPFLAGS="-Wall"
             export CC="gcc -m64"
             export CXX="gcc -m64"
-            ./build-on.sh 'testdir-all' '' 'make'
+            ./build-on.sh 'testdir-all' '' 'make' 'libbacktrace'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -439,6 +450,7 @@ jobs:
         with:
           name: logs-solaris11
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status
@@ -477,7 +489,7 @@ jobs:
             pwd
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'gmake'
+            ./build-on.sh 'testdir-all' '' 'gmake' 'libbacktrace'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -485,6 +497,7 @@ jobs:
         with:
           name: logs-solaris11-omnios
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status
@@ -540,7 +553,7 @@ jobs:
       - name: Build in Cygwin
         run: |
           export CPPFLAGS="-Wall"
-          ./build-on.sh 'testdir-all' '' 'make'
+          ./build-on.sh 'testdir-all' '' 'make' 'libbacktrace'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -548,6 +561,7 @@ jobs:
         with:
           name: logs-cygwin${{ matrix.bitness }}
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status
@@ -607,7 +621,7 @@ jobs:
           export CPPFLAGS="-Wall"
           export CC=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32-gcc
           export CXX=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32-g++
-          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make'
+          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' 'libbacktrace'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -615,6 +629,7 @@ jobs:
         with:
           name: logs-mingw${{ matrix.bitness }}
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status
@@ -709,7 +724,7 @@ jobs:
           export STRIP=":"
           export AR="`pwd`/ar-lib lib"
           export RANLIB=":"
-          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make'
+          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' 'libbacktrace'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -717,6 +732,7 @@ jobs:
         with:
           name: logs-msvc${{ matrix.bitness }}
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status
@@ -752,7 +768,7 @@ jobs:
           export CXX="clang++ -fsanitize=address,undefined,signed-integer-overflow,shift,integer-divide-by-zero"
           export CXXFLAGS="-O0 -fno-omit-frame-pointer -ggdb"
           export ASAN_OPTIONS="detect_leaks=0 abort_on_error=1 allocator_may_return_null=1"
-          ./build-on.sh 'testdir-all' '' 'make'
+          ./build-on.sh 'testdir-all' '' 'make' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -760,6 +776,7 @@ jobs:
         with:
           name: logs-sanitized
           path: |
+            libbacktrace/log[124]
             testdir-all/build/config.cache
             testdir-all/build/config.log
             testdir-all/build/config.status

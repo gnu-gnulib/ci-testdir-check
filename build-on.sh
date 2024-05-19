@@ -21,8 +21,19 @@
 package="$1"
 configure_options="$2"
 make="$3"
+prerequisites="$4"
 
 set -x
+
+# Build and install the prerequisites.
+for prereq in $prerequisites; do
+  tar xfz $prereq.tar.gz
+  cd $prereq
+  ./configure $configure_options > log1 2>&1; rc=$?; cat log1; test $rc = 0 || exit 1
+  $make > log2 2>&1; rc=$?; cat log2; test $rc = 0 || exit 1
+  $make install > log4 2>&1; rc=$?; cat log4; test $rc = 0 || exit 1
+  cd ..
+done
 
 # Unpack the tarball.
 tarfile="$package".tar.gz

@@ -17,13 +17,18 @@
 
 # This script builds the package.
 # Usage: build-tarball.sh PACKAGE
-# Its output is two tarballs:
+# Its output is three tarballs:
+#   - libbacktrace.tar.gz
 #   - testdir-all.tar.gz
 #   - testdir-all-for-mingw.tar.gz
 
 package="$1"
 
 set -e
+
+# Fetch prerequisite sources (uses package 'git').
+git clone --depth 1 https://github.com/ianlancetaylor/libbacktrace.git
+tar cfz libbacktrace.tar.gz libbacktrace
 
 # Fetch sources (uses package 'git').
 git clone --depth 1 https://git.savannah.gnu.org/git/"$package".git
