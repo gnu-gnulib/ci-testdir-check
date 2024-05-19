@@ -728,7 +728,7 @@ jobs:
           export STRIP=":"
           export AR="`pwd`/ar-lib lib"
           export RANLIB=":"
-          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' '/usr/local/msvc${{ matrix.bitness }}' 'libbacktrace'
+          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' '/usr/local/msvc${{ matrix.bitness }}' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
