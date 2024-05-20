@@ -32,6 +32,10 @@ tar cfz libbacktrace.tar.gz libbacktrace
 
 # Fetch sources (uses package 'git').
 git clone --depth 1 https://git.savannah.gnu.org/git/"$package".git
+
+# Apply patches.
+(cd "$package" && patch -p1 < ../patches/0001-vasnprintf-Don-t-abort-for-pseudo-denormal-arguments.patch)
+
 cd "$package"
 
 # List of modules to avoid.
