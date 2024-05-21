@@ -444,6 +444,9 @@ jobs:
             env | LC_ALL=C sort
             pwd
             ls -l
+            : "The locale set by default, C.UTF-8, is not a valid locale on Solaris 11."
+            : "This causes a failure of the test-update-copyright.sh test."
+            export LANG=en_US.UTF-8
             export CPPFLAGS="-I$HOME/include -Wall"
             export LDFLAGS="-L$HOME/lib"
             export CC="gcc -m64"
