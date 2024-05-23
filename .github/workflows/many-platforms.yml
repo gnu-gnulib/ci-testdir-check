@@ -239,7 +239,7 @@ jobs:
       - run: pwd
       # Install Homebrew packages.
       # List of packages: https://formulae.brew.sh/
-      # - run: brew install ...
+      - run: ${{ matrix.os == 'macos-14' && 'brew install libiconv' || ':' }}
       - run: |
           pwd
           wget -O macos-compile 'https://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;f=build-aux/macos-compile;hb=HEAD'
@@ -735,7 +735,8 @@ jobs:
           export STRIP=":"
           export AR="`pwd`/ar-lib lib"
           export RANLIB=":"
-          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' '/usr/local/msvc${{ matrix.bitness }}' ''
+          wget -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
+          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' '/usr/local/msvc${{ matrix.bitness }}' 'libiconv-1.17'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
