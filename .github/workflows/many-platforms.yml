@@ -244,9 +244,8 @@ jobs:
           pwd
           wget -O macos-compile 'https://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;f=build-aux/macos-compile;hb=HEAD'
           chmod a+x macos-compile
-          ls -l ${HOMEBREW_PREFIX-/usr/local}/include/iconv* ${HOMEBREW_PREFIX-/usr/local}/lib/libiconv* ${HOMEBREW_PREFIX-/usr/local}/opt/libiconv/include/iconv* ${HOMEBREW_PREFIX-/usr/local}/opt/libiconv/lib/libiconv* || true
-          export CPPFLAGS="-I$HOME/include -I${HOMEBREW_PREFIX-/usr/local}/include -Wall"
-          export LDFLAGS="-L$HOME/lib -L${HOMEBREW_PREFIX-/usr/local}/lib"
+          export CPPFLAGS="-I$HOME/include -I${HOMEBREW_PREFIX-/usr/local}/opt/libiconv/include -Wall"
+          export LDFLAGS="-L$HOME/lib -L${HOMEBREW_PREFIX-/usr/local}/opt/libiconv/lib"
           export CC="`pwd`/macos-compile clang"
           export CXX="`pwd`/macos-compile clang++"
           ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace'
