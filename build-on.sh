@@ -52,9 +52,17 @@ CPPFLAGS="$CPPFLAGS -DCONTINUE_AFTER_ASSERT" \
 FORCE_UNSAFE_CONFIGURE=1 ../configure --config-cache --with-included-libunistring $configure_options > log1 2>&1; rc=$?; cat log1; test $rc = 0 || exit 1
 
 # Build.
-$make > log2 2>&1; rc=$?; cat log2; test $rc = 0 || exit 1
+if test "`uname -s`" = SunOS; then
+  $make 2>&1 | gawk '{ print strftime("%H:%M:%S"), $0; fflush(); }' | tee log2
+else
+  $make > log2 2>&1; rc=$?; cat log2; test $rc = 0 || exit 1
+fi
 
 # Run the tests.
-$make check > log3 2>&1; rc=$?; cat log3; test $rc = 0 || exit 1
+if test "`uname -s`" = SunOS; then
+  $make check 2>&1 | gawk '{ print strftime("%H:%M:%S"), $0; fflush(); }' | tee log3
+else
+  $make check > log3 2>&1; rc=$?; cat log3; test $rc = 0 || exit 1
+fi
 
 cd ..
