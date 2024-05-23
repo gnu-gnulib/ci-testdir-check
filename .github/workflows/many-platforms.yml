@@ -679,7 +679,7 @@ jobs:
           platform: x86_64
           # Install Cygwin packages.
           # List of packages: https://cygwin.com/packages/package_list.html
-          packages: wget ${{ matrix.bitness == 32 && 'mingw64-i686-binutils' || 'mingw64-x86_64-binutils' }} make
+          packages: wget ${{ matrix.bitness == 32 && 'mingw64-i686-binutils mingw64-i686-gcc-core' || 'mingw64-x86_64-binutils mingw64-x86_64-gcc-core' }} make
       - name: cygcheck
         run: cygcheck -V
       - name: cygcheck
