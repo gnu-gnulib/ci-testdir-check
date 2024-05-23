@@ -47,7 +47,7 @@ rm -rf ../testdir-all
 ./gnulib-tool --create-testdir --dir=../testdir-all --with-c++-tests --without-privileged-tests --single-configure `./all-modules` `for m in $avoids; do echo " --avoid=$m"; done`
 
 rm -rf ../testdir-all-for-mingw
-./gnulib-tool --create-testdir --dir=../testdir-all-for-mingw --with-c++-tests --without-privileged-tests --single-configure `./all-modules --for-msvc` `for m in $avoids; do echo " --avoid=$m"; done`
+./gnulib-tool --create-testdir --dir=../testdir-all-for-mingw --without-c++-tests --without-privileged-tests --single-configure `./all-modules --for-msvc` `for m in $avoids; do echo " --avoid=$m"; done`
 
 cd ..
 
