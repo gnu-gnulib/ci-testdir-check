@@ -563,7 +563,7 @@ jobs:
       - name: Build in Cygwin
         run: |
           export CPPFLAGS="-Wall"
-          ./build-on.sh 'testdir-all' '' 'make' '/usr' 'libbacktrace'
+          ./build-on.sh 'testdir-all' '${{ matrix.bitness == 32 && '--disable-year2038' || '' }}' 'make' '/usr' 'libbacktrace'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
