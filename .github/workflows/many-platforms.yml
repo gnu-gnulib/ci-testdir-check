@@ -607,7 +607,7 @@ jobs:
           platform: x86_64
           # Install Cygwin packages.
           # List of packages: https://cygwin.com/packages/package_list.html
-          packages: ${{ matrix.bitness == 32 && 'mingw64-i686-gcc-core mingw64-i686-headers mingw64-i686-runtime mingw64-i686-gcc-g++ mingw64-i686-win-iconv' || 'mingw64-x86_64-gcc-core mingw64-x86_64-headers mingw64-x86_64-runtime mingw64-x86_64-gcc-g++ mingw64-x86_64-win-iconv' }} make
+          packages: ${{ matrix.bitness == 32 && 'mingw64-i686-gcc-core mingw64-i686-headers mingw64-i686-runtime mingw64-i686-gcc-g++' || 'mingw64-x86_64-gcc-core mingw64-x86_64-headers mingw64-x86_64-runtime mingw64-x86_64-gcc-g++' }} make
       - name: cygcheck
         run: cygcheck -V
       - name: cygcheck
@@ -631,7 +631,8 @@ jobs:
           export CPPFLAGS="-Wall"
           export CC=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32-gcc
           export CXX=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32-g++
-          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' '/usr/${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32/sys-root/mingw' 'libbacktrace'
+          wget -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
+          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' '/usr/${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32/sys-root/mingw' 'libbacktrace libiconv-1.17'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
