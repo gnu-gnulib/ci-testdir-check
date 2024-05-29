@@ -42,6 +42,8 @@ cd "$package"
 avoids=
 # This test exhibits spurious failures on FreeBSD, NetBSD, OpenBSD.
 avoids="$avoids nonblocking-socket-tests"
+# This test always fails on 32-bit Cygwin.
+avoids="$avoids year2038-tests"
 
 rm -rf ../testdir-all
 ./gnulib-tool --create-testdir --dir=../testdir-all --with-c++-tests --without-privileged-tests --single-configure `./all-modules` `for m in $avoids; do echo " --avoid=$m"; done`
