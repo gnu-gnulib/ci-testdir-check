@@ -40,8 +40,10 @@ cd "$package"
 
 # List of modules to avoid.
 avoids=
-# This test exhibits spurious failures on FreeBSD, NetBSD, OpenBSD.
+# This test exhibits spurious failures on FreeBSD, NetBSD, OpenBSD, mingw.
 avoids="$avoids nonblocking-socket-tests"
+# This test exhibits spurious failures on MSVC.
+avoids="$avoids nonblocking-pipe-tests"
 # This test always fails on 32-bit Cygwin.
 avoids="$avoids year2038-tests"
 
