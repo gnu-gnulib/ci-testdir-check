@@ -7,7 +7,7 @@ index 50c270440d..5212d3c262 100644
    {
  #define Pacific 0
 +#if defined _WIN32 && !defined __CYGWIN__
-+    { 0, "PST8PDT"                     },
++    { 0, "PST7PDT"                     },
 +#else
      { 0, "PST8PDT,M3.2.0,M11.1.0"      },
 +#endif
@@ -19,7 +19,7 @@ index 50c270440d..5212d3c262 100644
  
  #define CentEur 3
 +#if defined _WIN32 && !defined __CYGWIN__
-+    { 0, "CET-1CEST"                   },
++    { 0, "CET-2CEST"                   },
 +#else
      { 0, "CET-1CEST,M3.5.0,M10.5.0/3"  },
 +#endif
