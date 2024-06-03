@@ -1,0 +1,28 @@
+diff --git a/tests/test-nstrftime.h b/tests/test-nstrftime.h
+index 50c270440d..5212d3c262 100644
+--- a/tests/test-nstrftime.h
++++ b/tests/test-nstrftime.h
+@@ -102,7 +102,11 @@ struct tzalloc_test
+ static struct tzalloc_test TZ[] =
+   {
+ #define Pacific 0
++#if defined _WIN32 && !defined __CYGWIN__
++    { 0, "PST8PDT"                     },
++#else
+     { 0, "PST8PDT,M3.2.0,M11.1.0"      },
++#endif
+ 
+ #define Arizona 1
+     { 0, "MST7"                        },
+@@ -111,7 +115,11 @@ static struct tzalloc_test TZ[] =
+     { 0, 0                             },
+ 
+ #define CentEur 3
++#if defined _WIN32 && !defined __CYGWIN__
++    { 0, "CET-1CEST"                   },
++#else
+     { 0, "CET-1CEST,M3.5.0,M10.5.0/3"  },
++#endif
+ 
+ #define Japan 4
+     { 0, "JST-9"                       },
