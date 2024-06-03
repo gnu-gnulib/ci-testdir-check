@@ -35,7 +35,6 @@ git clone --depth 1 https://git.savannah.gnu.org/git/"$package".git
 
 # Apply patches.
 (cd "$package" && patch -p1 < ../patches/0001-debug-dprintf-posix2.patch)
-(cd "$package" && patch -p1 < ../patches/0001-nstrftime.patch)
 
 cd "$package"
 
