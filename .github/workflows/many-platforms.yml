@@ -555,18 +555,6 @@ jobs:
       - run: env | LC_ALL=C sort
       - run: pwd
       - run: ls -l
-      # Investigate test-file-has-acl-2.sh failure.
-      - run: mount
-      - run: df /var/tmp
-      - run: ls -ld /var/tmp
-      - run: ls -l /var/tmp
-      - run: mkdir /var/tmp/emptydir
-      - run: getfacl -a /var/tmp/emptydir
-      - run: df .
-      - run: ls -ld .
-      - run: ls -l .
-      - run: mkdir emptydir
-      - run: getfacl -a emptydir
       - run: echo "$PATH"
       - run: ls -l /usr/bin
       # Convert the shell script, that the Windows 'git' port has checked out
