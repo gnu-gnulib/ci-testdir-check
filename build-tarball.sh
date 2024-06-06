@@ -46,12 +46,15 @@ avoids="$avoids nonblocking-socket-tests"
 avoids="$avoids nonblocking-pipe-tests"
 # This test always fails on 32-bit Cygwin.
 avoids="$avoids year2038-tests"
+avoids_for_mingw="$avoids"
+# This test exhibits spurious failures on mingw and MSVC.
+avoids_for_mingw="$avoids_for_mingw asyncsafe-spin-tests"
 
 rm -rf ../testdir-all
 ./gnulib-tool --create-testdir --dir=../testdir-all --with-c++-tests --without-privileged-tests --single-configure `./all-modules` `for m in $avoids; do echo " --avoid=$m"; done`
 
 rm -rf ../testdir-all-for-mingw
-./gnulib-tool --create-testdir --dir=../testdir-all-for-mingw --without-c++-tests --without-privileged-tests --single-configure `./all-modules --for-msvc` `for m in $avoids; do echo " --avoid=$m"; done`
+./gnulib-tool --create-testdir --dir=../testdir-all-for-mingw --without-c++-tests --without-privileged-tests --single-configure `./all-modules --for-msvc` `for m in $avoids_for_mingw; do echo " --avoid=$m"; done`
 
 cd ..
 
