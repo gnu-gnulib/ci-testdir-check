@@ -1,0 +1,13 @@
+Information for contributors to this repository
+***********************************************
+
+Tips and tricks
+---------------
+
+If the execution log of a job does not reveal a failure cause, look into the
+log files. If necessary, add relevant log files to the actions/upload-artifact
+element.
+
+If a job takes a long time, pipe the command output through
+  gawk '{ print strftime("%H:%M:%S"), $0; fflush(); }'
+before writing it into a log file.
