@@ -531,6 +531,8 @@ jobs:
       CYGWIN_NOWINPATH: 1
     steps:
       # This is needed because we run a script stored in this repository.
+      - run: git config --global core.autocrlf input
+        shell: cmd
       - uses: actions/checkout@v4
       # Download the artifact to $GITHUB_WORKSPACE.
       # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
@@ -557,9 +559,6 @@ jobs:
       - run: ls -l
       - run: echo "$PATH"
       - run: ls -l /usr/bin
-      # Convert the shell script, that the Windows 'git' port has checked out
-      # with CR-LF newlines, back to Unix newlines.
-      - run: sed -i -e 's/\r$//' build-on.sh
       - name: Build in Cygwin
         run: |
           export CPPFLAGS="-Wall"
@@ -595,6 +594,8 @@ jobs:
       CYGWIN_NOWINPATH: 1
     steps:
       # This is needed because we run a script stored in this repository.
+      - run: git config --global core.autocrlf input
+        shell: cmd
       - uses: actions/checkout@v4
       # Download the artifact to $GITHUB_WORKSPACE.
       # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
@@ -621,9 +622,6 @@ jobs:
       - run: ls -l
       - run: echo "$PATH"
       - run: ls -l /usr/bin
-      # Convert the shell script, that the Windows 'git' port has checked out
-      # with CR-LF newlines, back to Unix newlines.
-      - run: sed -i -e 's/\r$//' build-on.sh
       - name: Build in Cygwin
         run: |
           set -x
@@ -664,6 +662,8 @@ jobs:
       CYGWIN_NOWINPATH: 1
     steps:
       # This is needed because we run a script stored in this repository.
+      - run: git config --global core.autocrlf input
+        shell: cmd
       - uses: actions/checkout@v4
       # Download the artifact to $GITHUB_WORKSPACE.
       # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
@@ -694,9 +694,6 @@ jobs:
       - run: ls -l
       - run: echo "$PATH"
       - run: ls -l /usr/bin
-      # Convert the shell script, that the Windows 'git' port has checked out
-      # with CR-LF newlines, back to Unix newlines.
-      - run: sed -i -e 's/\r$//' build-on.sh
       - run: |
           wget -O ar-lib 'https://git.savannah.gnu.org/gitweb/?p=automake.git;a=blob_plain;f=lib/ar-lib;hb=HEAD'
           wget -O compile 'https://git.savannah.gnu.org/gitweb/?p=automake.git;a=blob_plain;f=lib/compile;hb=HEAD'
