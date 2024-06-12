@@ -36,7 +36,7 @@ on:
   schedule:
     # Doc: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     # POSIX cron syntax: https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07
-    - cron: '17 2 * * 1'
+    - cron: '25 4 * * 1'
 
 # Variables.
 env:
