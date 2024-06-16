@@ -233,6 +233,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: tarball
+      - run: sw_vers
       - run: uname -a
       - run: id
       - run: env | LC_ALL=C sort
