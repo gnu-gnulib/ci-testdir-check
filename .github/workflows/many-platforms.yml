@@ -56,6 +56,8 @@ jobs:
       # List of packages: https://packages.ubuntu.com/
       - run: sudo apt update; sudo apt install autopoint gperf bison
       - run: |
+          wget -O automake-1.16.92.tar.gz https://alpha.gnu.org/gnu/automake/automake-1.16.92.tar.gz
+          tar xfz automake-1.16.92.tar.gz && cd automake-1.16.92 && ./configure --prefix=/usr && make && sudo make install
           ./build-tarball.sh '${{ env.package }}'
       # Doc: https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ failure() }}
