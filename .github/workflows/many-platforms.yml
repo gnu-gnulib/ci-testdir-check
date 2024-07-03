@@ -151,8 +151,10 @@ jobs:
             id
             env | LC_ALL=C sort
             pwd
+            : "The CentOS packages repository has moved on 2024-07-01."
+            sed -i -e 's|^mirrorlist=|#mirrorlist=|' -e 's|^#baseurl=http://mirror\.centos\.org|baseurl=http://vault.centos.org|' /etc/yum.repos.d/CentOS-Base.repo
             : "Install CentOS Linux packages"
-            : "List of packages: http://mirror.centos.org/centos/7/os/x86_64/Packages/"
+            : "List of packages: http://vault.centos.org/centos/7/os/x86_64/Packages/"
             yum -y install make gcc gcc-c++
             cd /work
             ls -l
