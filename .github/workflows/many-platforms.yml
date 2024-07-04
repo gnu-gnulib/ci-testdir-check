@@ -202,7 +202,7 @@ jobs:
             : "                  https://repo.almalinux.org/almalinux/9/CRB/x86_64/os/Packages/"
             : "                  https://repo.almalinux.org/almalinux/9/devel/x86_64/os/Packages/"
             : "Explanation: https://wiki.almalinux.org/repos/AlmaLinux.html"
-            yum -y install make gcc gcc-c++
+            yum -y install make gcc gcc-c++ diffutils
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
