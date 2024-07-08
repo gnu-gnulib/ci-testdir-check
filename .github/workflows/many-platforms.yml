@@ -114,7 +114,7 @@ jobs:
       - run: |
           pwd
           export CPPFLAGS="-Wall"
-          ./build-on.sh 'testdir-all' '' 'make' "$HOME" ''
+          ./build-on.sh 'testdir-all' '' 'make' "$HOME" '' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -159,7 +159,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace'
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -206,7 +206,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace'
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -249,7 +249,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace'
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'apk add musl-libintl'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -263,6 +263,11 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
+            testdir-all/build-full/config.cache
+            testdir-all/build-full/config.log
+            testdir-all/build-full/config.status
+            testdir-all/build-full/log[123]
+            testdir-all/build-full/gltests/test-*.log
           retention-days: 7
           overwrite: true
   check-macos:
@@ -294,11 +299,11 @@ jobs:
           pwd
           wget -O macos-compile 'https://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;f=build-aux/macos-compile;hb=HEAD'
           chmod a+x macos-compile
-          export CPPFLAGS="-I$HOME/include -I${HOMEBREW_PREFIX-/usr/local}/opt/libiconv/include -Wall"
-          export LDFLAGS="-L$HOME/lib -L${HOMEBREW_PREFIX-/usr/local}/opt/libiconv/lib"
+          export CPPFLAGS="-I$HOME/include -I${HOMEBREW_PREFIX-/usr/local}/opt/gettext/include -I${HOMEBREW_PREFIX-/usr/local}/opt/libiconv/include -Wall"
+          export LDFLAGS="-L$HOME/lib -L${HOMEBREW_PREFIX-/usr/local}/opt/gettext/lib -L${HOMEBREW_PREFIX-/usr/local}/opt/libiconv/lib"
           export CC="`pwd`/macos-compile clang"
           export CXX="`pwd`/macos-compile clang++"
-          ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace'
+          ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace' ${{ matrix.os == 'macos-14' && 'brew install gettext' || '' }}
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -312,6 +317,11 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
+            testdir-all/build-full/config.cache
+            testdir-all/build-full/config.log
+            testdir-all/build-full/config.status
+            testdir-all/build-full/log[123]
+            testdir-all/build-full/gltests/test-*.log
           retention-days: 7
           overwrite: true
   check-freebsd:
@@ -346,7 +356,7 @@ jobs:
             ls -l
             export CPPFLAGS="-I/usr/local/include -Wall"
             export LDFLAGS="-L/usr/local/lib"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' ''
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' '' 'pkg install -y gettext-runtime'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -360,6 +370,11 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
+            testdir-all/build-full/config.cache
+            testdir-all/build-full/config.log
+            testdir-all/build-full/config.status
+            testdir-all/build-full/log[123]
+            testdir-all/build-full/gltests/test-*.log
           retention-days: 7
           overwrite: true
   check-netbsd:
@@ -395,7 +410,7 @@ jobs:
             ls -l
             export CPPFLAGS="-I/usr/pkg/include -Wall"
             export LDFLAGS="-L/usr/pkg/lib"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/pkg' 'libbacktrace'
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/pkg' 'libbacktrace' '/usr/sbin/pkg_add gettext-lib'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -409,6 +424,11 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
+            testdir-all/build-full/config.cache
+            testdir-all/build-full/config.log
+            testdir-all/build-full/config.status
+            testdir-all/build-full/log[123]
+            testdir-all/build-full/gltests/test-*.log
           retention-days: 7
           overwrite: true
   check-openbsd:
@@ -446,7 +466,7 @@ jobs:
             ls -l
             export CPPFLAGS="-I/usr/local/include -Wall"
             export LDFLAGS="-L/usr/local/lib"
-            ./build-on.sh 'testdir-all' '' 'gmake' '/usr/local' 'libbacktrace'
+            ./build-on.sh 'testdir-all' '' 'gmake' '/usr/local' 'libbacktrace' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -501,7 +521,7 @@ jobs:
             export LDFLAGS="-L$HOME/lib"
             export CC="gcc -m64"
             export CXX="gcc -m64"
-            ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace'
+            ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -549,7 +569,7 @@ jobs:
             ls -l
             export CPPFLAGS="-I$HOME/include -Wall"
             export LDFLAGS="-L$HOME/lib"
-            ./build-on.sh 'testdir-all' '' 'gmake' "$HOME" 'libbacktrace'
+            ./build-on.sh 'testdir-all' '' 'gmake' "$HOME" 'libbacktrace' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -612,7 +632,7 @@ jobs:
       - name: Build in Cygwin
         run: |
           export CPPFLAGS="-Wall"
-          ./build-on.sh 'testdir-all' '' 'make' '/usr' 'libbacktrace'
+          ./build-on.sh 'testdir-all' '' 'make' '/usr' 'libbacktrace' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -680,7 +700,7 @@ jobs:
           export CC=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32-gcc
           export CXX=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32-g++
           wget -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
-          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' '/usr/${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32/sys-root/mingw' 'libbacktrace libiconv-1.17'
+          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' '/usr/${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32/sys-root/mingw' 'libbacktrace libiconv-1.17' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -784,7 +804,7 @@ jobs:
           export AR="`pwd`/ar-lib lib"
           export RANLIB=":"
           wget -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
-          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' '/usr/local/msvc${{ matrix.bitness }}' 'libiconv-1.17'
+          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' '/usr/local/msvc${{ matrix.bitness }}' 'libiconv-1.17' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -829,7 +849,7 @@ jobs:
           export CXX="clang++ -fsanitize=address,undefined,signed-integer-overflow,shift,integer-divide-by-zero"
           export CXXFLAGS="-O0 -fno-omit-frame-pointer -ggdb"
           export ASAN_OPTIONS="detect_leaks=0 abort_on_error=1 allocator_may_return_null=1"
-          ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace'
+          ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
