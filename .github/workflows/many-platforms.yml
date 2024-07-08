@@ -114,7 +114,7 @@ jobs:
       - run: |
           pwd
           export CPPFLAGS="-Wall"
-          ./build-on.sh 'testdir-all' '' 'make' "$HOME" '' ''
+          ./build-on.sh 'testdir-all' '' 'make' "$HOME" '' 'sudo localedef -i ar_SA -f ISO-8859-6 ar_SA.ISO-8859-6 && sudo localedef -i de_DE -f UTF-8 de_DE.UTF-8 && sudo localedef -i es_ES -f UTF-8 es_ES.UTF-8 && sudo localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO-8859-1 && sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 && sudo localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP && sudo localedef -i tr_TR -f UTF-8 tr_TR.UTF-8 && sudo localedef -i zh_CN -f GB18030 zh_CN.GB18030'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -128,6 +128,11 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
+            testdir-all/build-full/config.cache
+            testdir-all/build-full/config.log
+            testdir-all/build-full/config.status
+            testdir-all/build-full/log[123]
+            testdir-all/build-full/gltests/test-*.log
           retention-days: 7
           overwrite: true
   check-linux-gnu-centos:
@@ -159,7 +164,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' ''
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'yum -y install glibc-common && localedef -i ar_SA -f ISO-8859-6 ar_SA.ISO-8859-6 && localedef -i de_DE -f UTF-8 de_DE.UTF-8 && localedef -i es_ES -f UTF-8 es_ES.UTF-8 && localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO-8859-1 && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 && localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP && localedef -i tr_TR -f UTF-8 tr_TR.UTF-8 && localedef -i zh_CN -f GB18030 zh_CN.GB18030'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -173,6 +178,11 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
+            testdir-all/build-full/config.cache
+            testdir-all/build-full/config.log
+            testdir-all/build-full/config.status
+            testdir-all/build-full/log[123]
+            testdir-all/build-full/gltests/test-*.log
           retention-days: 7
           overwrite: true
   check-linux-gnu-alma:
@@ -206,7 +216,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' ''
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'yum -y install glibc-locale-source && localedef -i ar_SA -f ISO-8859-6 ar_SA.ISO-8859-6 && localedef -i de_DE -f UTF-8 de_DE.UTF-8 && localedef -i es_ES -f UTF-8 es_ES.UTF-8 && localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO-8859-1 && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 && localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP && localedef -i tr_TR -f UTF-8 tr_TR.UTF-8 && localedef -i zh_CN -f GB18030 zh_CN.GB18030'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -220,6 +230,11 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
+            testdir-all/build-full/config.cache
+            testdir-all/build-full/config.log
+            testdir-all/build-full/config.status
+            testdir-all/build-full/log[123]
+            testdir-all/build-full/gltests/test-*.log
           retention-days: 7
           overwrite: true
   check-linux-alpine:
@@ -249,7 +264,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'apk add musl-libintl'
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'apk add musl-libintl musl-locales'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -521,7 +536,7 @@ jobs:
             export LDFLAGS="-L$HOME/lib"
             export CC="gcc -m64"
             export CXX="gcc -m64"
-            ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace' ''
+            ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace' 'pkg install system/locale'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -535,6 +550,11 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
+            testdir-all/build-full/config.cache
+            testdir-all/build-full/config.log
+            testdir-all/build-full/config.status
+            testdir-all/build-full/log[123]
+            testdir-all/build-full/gltests/test-*.log
           retention-days: 7
           overwrite: true
   check-solaris11-omnios:
@@ -569,7 +589,7 @@ jobs:
             ls -l
             export CPPFLAGS="-I$HOME/include -Wall"
             export LDFLAGS="-L$HOME/lib"
-            ./build-on.sh 'testdir-all' '' 'gmake' "$HOME" 'libbacktrace' ''
+            ./build-on.sh 'testdir-all' '' 'gmake' "$HOME" 'libbacktrace' 'pkg install locale/de locale/es locale/fr locale/tr'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -583,6 +603,11 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
+            testdir-all/build-full/config.cache
+            testdir-all/build-full/config.log
+            testdir-all/build-full/config.status
+            testdir-all/build-full/log[123]
+            testdir-all/build-full/gltests/test-*.log
           retention-days: 7
           overwrite: true
   check-cygwin:
