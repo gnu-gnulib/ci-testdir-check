@@ -894,3 +894,55 @@ jobs:
             testdir-all/build/gltests/test-*.log
           retention-days: 7
           overwrite: true
+  # This is not a platform-specific test, but very useful for finding ISO C23 compliance bugs.
+  check-newest-clang:
+    name: make check with the newest clang release
+    needs: build-tarball
+    runs-on: ubuntu-22.04
+    steps:
+      # This is needed because we run a script stored in this repository.
+      - uses: actions/checkout@v4
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+      - uses: addnab/docker-run-action@v3
+        with:
+          # A Docker container with the newest clang release, based on Debian 11.
+          image: tuxmake/clang-18:latest
+          options: -v ${{ github.workspace }}:/work
+          run: |
+            uname -a
+            id
+            env | LC_ALL=C sort
+            pwd
+            : "Install Debian packages."
+            : "List of packages: https://packages.debian.org/"
+            : "apt update; sudo apt install ..."
+            cd /work
+            ls -l
+            export CPPFLAGS="-Wall"
+            export CC=clang
+            export CXX=clang++
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'apt update; apt install locales && localedef -i en_US -f UTF-8 en_US.UTF-8 && localedef -i ar_SA -f ISO-8859-6 ar_SA.ISO-8859-6 && localedef -i de_DE -f UTF-8 de_DE.UTF-8 && localedef -i es_ES -f UTF-8 es_ES.UTF-8 && localedef -i fa_IR -f UTF-8 fa_IR && localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO-8859-1 && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 && localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP && localedef -i tr_TR -f UTF-8 tr_TR.UTF-8 && localedef -i zh_CN -f GB18030 zh_CN.GB18030 && localedef -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS'
+      # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
+      #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
+      - if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-newest-clang
+          path: |
+            libbacktrace/log[124]
+            testdir-all/build/config.cache
+            testdir-all/build/config.log
+            testdir-all/build/config.status
+            testdir-all/build/log[123]
+            testdir-all/build/gltests/test-*.log
+            testdir-all/build-full/config.cache
+            testdir-all/build-full/config.log
+            testdir-all/build-full/config.status
+            testdir-all/build-full/log[123]
+            testdir-all/build-full/gltests/test-*.log
+          retention-days: 7
+          overwrite: true
