@@ -118,7 +118,7 @@ jobs:
       - run: |
           pwd
           export CPPFLAGS="-Wall"
-          ./build-on.sh 'testdir-all' '' 'make' "$HOME" '' 'sudo localedef -i ar_SA -f ISO-8859-6 ar_SA.ISO-8859-6 && sudo localedef -i de_DE -f UTF-8 de_DE.UTF-8 && sudo localedef -i es_ES -f UTF-8 es_ES.UTF-8 && sudo localedef -i fa_IR -f UTF-8 fa_IR && sudo localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO-8859-1 && sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 && sudo localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP && sudo localedef -i tr_TR -f UTF-8 tr_TR.UTF-8 && sudo localedef -i zh_CN -f GB18030 zh_CN.GB18030 && sudo localedef -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS'
+          ./build-on.sh 'testdir-all' '' 'make' "$HOME" '' 'sudo apt update; sudo apt install libacl1-dev libattr1-dev && sudo localedef -i ar_SA -f ISO-8859-6 ar_SA.ISO-8859-6 && sudo localedef -i de_DE -f UTF-8 de_DE.UTF-8 && sudo localedef -i es_ES -f UTF-8 es_ES.UTF-8 && sudo localedef -i fa_IR -f UTF-8 fa_IR && sudo localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO-8859-1 && sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 && sudo localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP && sudo localedef -i tr_TR -f UTF-8 tr_TR.UTF-8 && sudo localedef -i zh_CN -f GB18030 zh_CN.GB18030 && sudo localedef -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -168,7 +168,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'yum -y install glibc-common && localedef -i ar_SA -f ISO-8859-6 ar_SA.ISO-8859-6 && localedef -i de_DE -f UTF-8 de_DE.UTF-8 && localedef -i es_ES -f UTF-8 es_ES.UTF-8 && localedef -i fa_IR -f UTF-8 fa_IR && localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO-8859-1 && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 && localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP && localedef -i tr_TR -f UTF-8 tr_TR.UTF-8 && localedef -i zh_CN -f GB18030 zh_CN.GB18030 && localedef -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS'
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'yum -y install libacl-devel libattr-devel glibc-common && localedef -i ar_SA -f ISO-8859-6 ar_SA.ISO-8859-6 && localedef -i de_DE -f UTF-8 de_DE.UTF-8 && localedef -i es_ES -f UTF-8 es_ES.UTF-8 && localedef -i fa_IR -f UTF-8 fa_IR && localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO-8859-1 && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 && localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP && localedef -i tr_TR -f UTF-8 tr_TR.UTF-8 && localedef -i zh_CN -f GB18030 zh_CN.GB18030 && localedef -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -220,7 +220,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'yum -y install glibc-locale-source && localedef -i en_US -f UTF-8 en_US.UTF-8 && localedef -i ar_SA -f ISO-8859-6 ar_SA.ISO-8859-6 && localedef -i de_DE -f UTF-8 de_DE.UTF-8 && localedef -i es_ES -f UTF-8 es_ES.UTF-8 && localedef -i fa_IR -f UTF-8 fa_IR && localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO-8859-1 && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 && localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP && localedef -i tr_TR -f UTF-8 tr_TR.UTF-8 && localedef -i zh_CN -f GB18030 zh_CN.GB18030 && localedef -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS'
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'yum -y install libacl-devel libattr-devel glibc-locale-source && localedef -i en_US -f UTF-8 en_US.UTF-8 && localedef -i ar_SA -f ISO-8859-6 ar_SA.ISO-8859-6 && localedef -i de_DE -f UTF-8 de_DE.UTF-8 && localedef -i es_ES -f UTF-8 es_ES.UTF-8 && localedef -i fa_IR -f UTF-8 fa_IR && localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO-8859-1 && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 && localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP && localedef -i tr_TR -f UTF-8 tr_TR.UTF-8 && localedef -i zh_CN -f GB18030 zh_CN.GB18030 && localedef -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -268,7 +268,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'apk add musl-libintl musl-locales'
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'apk add musl-libintl libacl libattr musl-locales'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
@@ -925,7 +925,7 @@ jobs:
             export CPPFLAGS="-Wall"
             export CC=clang
             export CXX=clang++
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'apt update; apt -y install locales && localedef -i en_US -f UTF-8 en_US.UTF-8 && localedef -i ar_SA -f ISO-8859-6 ar_SA.ISO-8859-6 && localedef -i de_DE -f UTF-8 de_DE.UTF-8 && localedef -i es_ES -f UTF-8 es_ES.UTF-8 && localedef -i fa_IR -f UTF-8 fa_IR && localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO-8859-1 && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 && localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP && localedef -i tr_TR -f UTF-8 tr_TR.UTF-8 && localedef -i zh_CN -f GB18030 zh_CN.GB18030 && localedef -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS'
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'apt update; apt -y install libacl1-dev libattr1-dev locales && localedef -i en_US -f UTF-8 en_US.UTF-8 && localedef -i ar_SA -f ISO-8859-6 ar_SA.ISO-8859-6 && localedef -i de_DE -f UTF-8 de_DE.UTF-8 && localedef -i es_ES -f UTF-8 es_ES.UTF-8 && localedef -i fa_IR -f UTF-8 fa_IR && localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO-8859-1 && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 && localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP && localedef -i tr_TR -f UTF-8 tr_TR.UTF-8 && localedef -i zh_CN -f GB18030 zh_CN.GB18030 && localedef -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
