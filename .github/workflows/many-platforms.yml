@@ -372,10 +372,14 @@ jobs:
             : "Install FreeBSD packages"
             : "List of packages: https://ports.freebsd.org/cgi/ports.cgi"
             pkg install -y libbacktrace
+            : "Do only one build, not 'build' and 'build-full', here, because"
+            : "with two builds, this step often takes more than 14 min 45 sec"
+            : "and it then hangs."
+            pkg install -y gettext-runtime
             ls -l
             export CPPFLAGS="-I/usr/local/include -Wall"
             export LDFLAGS="-L/usr/local/lib"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' '' 'pkg install -y gettext-runtime'
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' '' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
