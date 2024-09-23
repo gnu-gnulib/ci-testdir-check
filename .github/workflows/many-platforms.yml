@@ -529,7 +529,7 @@ jobs:
           prepare: |
             : "Install Solaris packages"
             : "List of packages: http://pkg.oracle.com/solaris/release/en/index.shtml"
-            pkg install gcc gcc-c++
+            pkg install gcc gcc-c++; ret=$?; test $ret = 0 || test $ret = 4
           run: |
             set -x
             uname -a
