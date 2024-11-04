@@ -823,7 +823,7 @@ jobs:
           VCINSTALLDIR="${VSINSTALLDIR}"'\VC'
           PATH=`cygpath -u "${VCINSTALLDIR}"`/bin${pathelementsuffix}:"$PATH"
           INCLUDE="${VCINSTALLDIR}"'\include;'"${INCLUDE}"
-          LIB="${VCINSTALLDIR}"'\lib${libelementsuffix};'"${LIB}"
+          LIB="${VCINSTALLDIR}"'\lib'"${libelementsuffix};${LIB}"
           export INCLUDE LIB
           : "Possible values are _WIN32_WINNT_WINXP, _WIN32_WINNT_VISTA, _WIN32_WINNT_WIN7"
           win32_target=_WIN32_WINNT_WINXP
