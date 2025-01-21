@@ -1,6 +1,6 @@
 # A GitHub Actions workflow that builds a package on many platforms.
 
-# Copyright (C) 2024 Free Software Foundation, Inc.
+# Copyright (C) 2024-2025 Free Software Foundation, Inc.
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -881,9 +881,9 @@ jobs:
           pwd
           export CPPFLAGS="-I$HOME/include -Wall"
           export LDFLAGS="-L$HOME/lib"
-          export CC="clang -fsanitize=address,undefined,signed-integer-overflow,shift,integer-divide-by-zero"
+          export CC="clang -fsanitize=address,undefined,signed-integer-overflow,shift,integer-divide-by-zero -fno-sanitize-recover=undefined"
           export CFLAGS="-O0 -fno-omit-frame-pointer -ggdb"
-          export CXX="clang++ -fsanitize=address,undefined,signed-integer-overflow,shift,integer-divide-by-zero"
+          export CXX="clang++ -fsanitize=address,undefined,signed-integer-overflow,shift,integer-divide-by-zero -fno-sanitize-recover=undefined"
           export CXXFLAGS="-O0 -fno-omit-frame-pointer -ggdb"
           export ASAN_OPTIONS="detect_leaks=0 abort_on_error=1 allocator_may_return_null=1"
           ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace' ''
