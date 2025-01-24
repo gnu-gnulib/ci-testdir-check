@@ -216,7 +216,8 @@ jobs:
             : "                  https://repo.almalinux.org/almalinux/9/CRB/x86_64/os/Packages/"
             : "                  https://repo.almalinux.org/almalinux/9/devel/x86_64/os/Packages/"
             : "Explanation: https://wiki.almalinux.org/repos/AlmaLinux.html"
-            yum -y install glibc-gconv-extra make gcc gcc-c++ diffutils
+            yum -y install glibc-gconv-extra make gcc-toolset-14-gcc gcc-toolset-14-gcc-c++ diffutils
+            . /opt/rh/gcc-toolset-14/enable
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
@@ -580,13 +581,13 @@ jobs:
       # Doc: https://github.com/vmactions/omnios-vm
       - uses: vmactions/omnios-vm@v1
         with:
-          release: "r151048"
+          release: "r151052"
           mem: 2048
           prepare: |
             : "Install Solaris packages"
-            : "List of packages: https://pkg.omnios.org/r151048/core/en/index.shtml"
+            : "List of packages: https://pkg.omnios.org/r151052/core/en/index.shtml"
             pkg install \
-                developer/gcc13 developer/object-file system/header system/library/math \
+                developer/gcc14 developer/object-file system/header system/library/math \
                 developer/build/gnu-make
           run: |
             set -x
