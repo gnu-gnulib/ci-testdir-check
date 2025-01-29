@@ -627,10 +627,6 @@ jobs:
       fail-fast: false
       matrix:
         bitness: [32, 64]
-        # Too many regressions, see
-        # https://lists.gnu.org/archive/html/bug-gnulib/2024-12/msg00169.html
-        exclude:
-          - bitness: 64
     runs-on: windows-2022
     defaults:
       run:
