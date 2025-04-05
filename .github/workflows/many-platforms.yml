@@ -544,7 +544,7 @@ jobs:
             export CPPFLAGS="-I$HOME/include -Wall"
             export LDFLAGS="-L$HOME/lib"
             export CC="gcc -m64"
-            export CXX="gcc -m64"
+            export CXX="g++ -m64"
             ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace' 'pkg install system/locale'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
