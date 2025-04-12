@@ -1,0 +1,12 @@
+diff --git a/tests/test-select-in.sh b/tests/test-select-in.sh
+index ad86ea2526..699b28ce8b 100755
+--- a/tests/test-select-in.sh
++++ b/tests/test-select-in.sh
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ # Test select() on file descriptors opened for reading.
+-
++set -x
+ # This test is known to fail on Solaris 2.6 and older, due to its handling
+ # of /dev/null.
+ 
