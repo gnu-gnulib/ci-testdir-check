@@ -31,7 +31,7 @@ git clone --depth 1 https://github.com/ianlancetaylor/libbacktrace.git
 tar cfz libbacktrace.tar.gz libbacktrace
 
 # Fetch sources (uses package 'git').
-git clone --depth 1 https://git.savannah.gnu.org/git/"$package".git
+git clone --depth 1 "${gnulib_url}"
 
 # Apply patches.
 #(cd "$package" && patch -p1 < ../patches/...)
