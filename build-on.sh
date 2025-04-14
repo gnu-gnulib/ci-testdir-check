@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2024 Free Software Foundation, Inc.
+# Copyright (C) 2024-2025 Free Software Foundation, Inc.
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -65,7 +65,7 @@ else
   $make > log2 2>&1; rc=$?; cat log2; test $rc = 0 || exit 1
 fi
 
-if $cross_compiling; then
+if ! $cross_compiling; then
   # Run the tests.
   if false; then
     $make check 2>&1 | gawk '{ print strftime("%H:%M:%S"), $0; fflush(); }' | tee log3
@@ -91,7 +91,7 @@ if test -n "$install_optional_dependencies_command"; then
   # Build.
   $make > log2 2>&1; rc=$?; cat log2; test $rc = 0 || exit 1
 
-  if $cross_compiling; then
+  if ! $cross_compiling; then
     # Run the tests.
     $make check > log3 2>&1; rc=$?; cat log3; test $rc = 0 || exit 1
   fi
