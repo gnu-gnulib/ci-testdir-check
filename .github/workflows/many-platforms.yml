@@ -470,7 +470,7 @@ jobs:
       # Doc: https://github.com/vmactions/openbsd-vm
       - uses: vmactions/openbsd-vm@v1
         with:
-          release: '7.5'
+          release: '7.6'
           mem: 1024
           usesh: true
           # Avoid 'sync: sshfs' since it causes trouble with file timestamps
@@ -485,7 +485,7 @@ jobs:
             env | LC_ALL=C sort
             pwd
             : "Install OpenBSD packages"
-            : "List of packages: https://cdn.openbsd.org/pub/OpenBSD/7.5/packages/amd64/"
+            : "List of packages: https://cdn.openbsd.org/pub/OpenBSD/7.6/packages/amd64/"
             pkg_add gmake
             ls -l
             export CPPFLAGS="-I/usr/local/include -Wall"
