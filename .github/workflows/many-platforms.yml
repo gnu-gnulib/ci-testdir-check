@@ -64,8 +64,8 @@ jobs:
       - run: |
           wget -O autoconf-2.72.tar.gz https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.gz
           tar xfz autoconf-2.72.tar.gz && cd autoconf-2.72 && ./configure --prefix=/usr && make && sudo make install && cd ..
-          wget -O automake-1.17.tar.gz https://ftp.gnu.org/gnu/automake/automake-1.17.tar.gz
-          tar xfz automake-1.17.tar.gz && cd automake-1.17 && ./configure --prefix=/usr && make && sudo make install && cd ..
+          wget -O automake-1.18.tar.gz https://ftp.gnu.org/gnu/automake/automake-1.18.tar.gz
+          tar xfz automake-1.18.tar.gz && cd automake-1.18 && ./configure --prefix=/usr && make && sudo make install && cd ..
           ./build-tarball.sh '${{ env.package }}'
       # Doc: https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ failure() }}
