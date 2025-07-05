@@ -42,7 +42,7 @@ on:
 env:
   package: gnulib
   # URL suitable for 'git clone'
-  #gnulib_url: https://https.git.savannah.gnu.org/git/gnulib.git
+  #gnulib_url: https://git.savannah.gnu.org/git/gnulib.git
   gnulib_url: https://github.com/coreutils/gnulib.git
   # URL prefix suitable for downloading individual files through 'wget'
   #gnulib_url_prefix: https://gitweb.git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;hb=HEAD;f=
