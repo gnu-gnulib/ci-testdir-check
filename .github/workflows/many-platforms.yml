@@ -76,7 +76,7 @@ jobs:
             testdir-all/config.cache
             testdir-all/config.log
             testdir-all/config.status
-          retention-days: 7
+          retention-days: 28
           overwrite: true
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
@@ -87,7 +87,7 @@ jobs:
             libbacktrace.tar.gz
             testdir-all.tar.gz
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 28
           compression-level: 0
           overwrite: true
       - uses: actions/upload-artifact@v4
@@ -97,7 +97,7 @@ jobs:
             libbacktrace.tar.gz
             testdir-all-for-mingw.tar.gz
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 28
           compression-level: 0
           overwrite: true
   # We can run max. 20 "make check" jobs in parallel, max. 5 of them being on macOS.
@@ -143,7 +143,7 @@ jobs:
             testdir-all/build-full/config.status
             testdir-all/build-full/log[123]
             testdir-all/build-full/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   check-linux-gnu-centos:
     name: make check on CentOS GNU/Linux
@@ -193,7 +193,7 @@ jobs:
             testdir-all/build-full/config.status
             testdir-all/build-full/log[123]
             testdir-all/build-full/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   check-linux-gnu-alma:
     name: make check on AlmaLinux GNU/Linux
@@ -246,7 +246,7 @@ jobs:
             testdir-all/build-full/config.status
             testdir-all/build-full/log[123]
             testdir-all/build-full/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   check-linux-alpine:
     name: make check on Alpine Linux
@@ -294,7 +294,7 @@ jobs:
             testdir-all/build-full/config.status
             testdir-all/build-full/log[123]
             testdir-all/build-full/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   check-macos:
     name: make check on macOS
@@ -348,7 +348,7 @@ jobs:
             testdir-all/build-full/config.status
             testdir-all/build-full/log[123]
             testdir-all/build-full/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   check-freebsd:
     name: make check on FreeBSD
@@ -405,7 +405,7 @@ jobs:
             testdir-all/build-full/config.status
             testdir-all/build-full/log[123]
             testdir-all/build-full/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   check-netbsd:
     name: make check on NetBSD
@@ -459,7 +459,7 @@ jobs:
             testdir-all/build-full/config.status
             testdir-all/build-full/log[123]
             testdir-all/build-full/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   check-openbsd:
     name: make check on OpenBSD
@@ -510,7 +510,7 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   check-solaris11:
     name: make check on Solaris 11
@@ -570,7 +570,7 @@ jobs:
             testdir-all/build-full/config.status
             testdir-all/build-full/log[123]
             testdir-all/build-full/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   check-solaris11-omnios:
     name: make check on Solaris 11 OmniOS
@@ -623,7 +623,7 @@ jobs:
             testdir-all/build-full/config.status
             testdir-all/build-full/log[123]
             testdir-all/build-full/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   check-cygwin:
     name: make check on Cygwin
@@ -686,7 +686,7 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   check-mingw:
     name: make check on mingw
@@ -754,7 +754,7 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   check-msvc:
     name: make check on MSVC
@@ -858,7 +858,7 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   # This is not a platform-specific test, but very useful for finding bugs.
   check-sanitized:
@@ -903,7 +903,7 @@ jobs:
             testdir-all/build/config.status
             testdir-all/build/log[123]
             testdir-all/build/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   # This is not a platform-specific test, but very useful for finding ISO C23 compliance bugs.
   check-newest-clang:
@@ -956,7 +956,7 @@ jobs:
             testdir-all/build-full/config.status
             testdir-all/build-full/log[123]
             testdir-all/build-full/gltests/test-*.log
-          retention-days: 7
+          retention-days: 28
           overwrite: true
   # This is not a platform-specific test, but very useful for finding cross-compilation bugs.
   check-cross:
@@ -995,5 +995,5 @@ jobs:
             testdir-all/build/config.log
             testdir-all/build/config.status
             testdir-all/build/log[12]
-          retention-days: 7
+          retention-days: 28
           overwrite: true
