@@ -271,7 +271,7 @@ jobs:
             pwd
             : "Install Alpine Linux packages"
             : "List of packages: https://pkgs.alpinelinux.org/packages"
-            apk add make gcc musl-dev g++
+            apk add make gcc musl-dev linux-headers g++
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
