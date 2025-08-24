@@ -275,7 +275,7 @@ jobs:
             cd /work
             ls -l
             export CPPFLAGS="-Wall"
-            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'apk add musl-libintl acl attr musl-locales'
+            ./build-on.sh 'testdir-all' '' 'make' '/usr/local' 'libbacktrace' 'apk add musl-libintl acl-dev acl attr-dev attr musl-locales'
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
