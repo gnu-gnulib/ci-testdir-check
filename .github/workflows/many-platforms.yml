@@ -920,8 +920,8 @@ jobs:
           name: tarball
       - uses: addnab/docker-run-action@v3
         with:
-          # A Docker container with the newest clang release, based on Debian 12.
-          image: tuxmake/clang-20:latest
+          # A Docker container with the newest clang release, based on Debian 13.
+          image: tuxmake/clang-21:latest
           options: -v ${{ github.workspace }}:/work
           run: |
             uname -a
