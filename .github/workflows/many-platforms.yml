@@ -300,7 +300,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-13, macos-14, macos-15]
+        os: [macos-13, macos-14, macos-15, macos-26]
     runs-on: ${{ matrix.os }}
     steps:
       # This is needed because we run a script stored in this repository.
@@ -317,7 +317,7 @@ jobs:
       - run: pwd
       # Install Homebrew packages.
       # List of packages: https://formulae.brew.sh/
-      - run: ${{ (matrix.os == 'macos-14' || matrix.os == 'macos-15') && 'brew install libiconv' || ':' }}
+      - run: ${{ (matrix.os == 'macos-14' || matrix.os == 'macos-15' || matrix.os == 'macos-26') && 'brew install libiconv' || ':' }}
       - run: |
           pwd
           wget -O macos-compile "${gnulib_url_prefix}build-aux/macos-compile"
@@ -326,7 +326,7 @@ jobs:
           export LDFLAGS="-L$HOME/lib -L${HOMEBREW_PREFIX-/usr/local}/opt/gettext/lib -L${HOMEBREW_PREFIX-/usr/local}/opt/libiconv/lib"
           export CC="`pwd`/macos-compile clang"
           export CXX="`pwd`/macos-compile clang++"
-          ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace' ${{ (matrix.os == 'macos-14' || matrix.os == 'macos-15') && 'brew install gettext' || '' }}
+          ./build-on.sh 'testdir-all' '' 'make' "$HOME" 'libbacktrace' ${{ (matrix.os == 'macos-14' || matrix.os == 'macos-15' || matrix.os == 'macos-26') && 'brew install gettext' || '' }}
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
