@@ -473,7 +473,7 @@ jobs:
       # Doc: https://github.com/vmactions/openbsd-vm
       - uses: vmactions/openbsd-vm@v1
         with:
-          release: '7.6'
+          release: '7.7'
           mem: 1024
           usesh: true
           # Avoid 'sync: sshfs' since it causes trouble with file timestamps
