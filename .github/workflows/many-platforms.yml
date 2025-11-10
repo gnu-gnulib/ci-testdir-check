@@ -44,6 +44,8 @@ env:
   # URL prefix suitable for downloading individual files through 'wget'
   #gnulib_url_prefix: https://gitweb.git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;hb=HEAD;f=
   gnulib_url_prefix: https://raw.githubusercontent.com/coreutils/gnulib/refs/heads/master/
+  # Mirror of ftp.gnu.org
+  ftp_gnu_org: mirrors.ocf.berkeley.edu
 
 jobs:
   build-tarball:
@@ -59,9 +61,9 @@ jobs:
       # List of packages: https://packages.ubuntu.com/
       - run: sudo apt update; sudo apt install autopoint gperf bison
       - run: |
-          wget -O autoconf-2.72.tar.gz https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.gz
+          wget -O autoconf-2.72.tar.gz https://${{ env.ftp_gnu_org }}/gnu/autoconf/autoconf-2.72.tar.gz
           tar xfz autoconf-2.72.tar.gz && cd autoconf-2.72 && ./configure --prefix=/usr && make && sudo make install && cd ..
-          wget -O automake-1.18.tar.gz https://ftp.gnu.org/gnu/automake/automake-1.18.tar.gz
+          wget -O automake-1.18.tar.gz https://${{ env.ftp_gnu_org }}/gnu/automake/automake-1.18.tar.gz
           tar xfz automake-1.18.tar.gz && cd automake-1.18 && ./configure --prefix=/usr && make && sudo make install && cd ..
           ./build-tarball.sh '${{ env.package }}'
       # Doc: https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
@@ -736,7 +738,7 @@ jobs:
           export CPPFLAGS="-Wall"
           export CC=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32-gcc
           export CXX=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32-g++
-          wget -O libiconv-1.18.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.18.tar.gz
+          wget -O libiconv-1.18.tar.gz https://${{ env.ftp_gnu_org }}/gnu/libiconv/libiconv-1.18.tar.gz
           ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' '/usr/${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32/sys-root/mingw' 'libbacktrace libiconv-1.18' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
@@ -840,7 +842,7 @@ jobs:
           export STRIP=":"
           export AR="`pwd`/ar-lib lib"
           export RANLIB=":"
-          wget -O libiconv-1.18.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.18.tar.gz
+          wget -O libiconv-1.18.tar.gz https://${{ env.ftp_gnu_org }}/gnu/libiconv/libiconv-1.18.tar.gz
           ./build-on.sh 'testdir-all-for-mingw' '--host=${{ matrix.bitness == 32 && 'i686' || 'x86_64' }}-w64-mingw32' 'make' '/usr/local/msvc${{ matrix.bitness }}' 'libiconv-1.18' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
