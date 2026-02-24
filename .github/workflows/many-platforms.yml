@@ -1,6 +1,6 @@
 # A GitHub Actions workflow that builds a package on many platforms.
 
-# Copyright (C) 2024-2025 Free Software Foundation, Inc.
+# Copyright (C) 2024-2026 Free Software Foundation, Inc.
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -535,7 +535,7 @@ jobs:
           prepare: |
             : "Install Solaris packages"
             : "List of packages: http://pkg.oracle.com/solaris/release/en/index.shtml"
-            pkg install gcc gcc-c++; ret=$?; test $ret = 0 || test $ret = 4
+            set +e; pkg install gcc gcc-c++; ret=$?; test $ret = 0 || test $ret = 4
           run: |
             set -x
             uname -a
