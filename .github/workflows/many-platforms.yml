@@ -61,8 +61,8 @@ jobs:
       # List of packages: https://packages.ubuntu.com/
       - run: sudo apt update; sudo apt install autopoint gperf bison
       - run: |
-          wget -O autoconf-2.72.tar.gz https://${{ env.ftp_gnu_org }}/gnu/autoconf/autoconf-2.72.tar.gz
-          tar xfz autoconf-2.72.tar.gz && cd autoconf-2.72 && ./configure --prefix=/usr && make && sudo make install && cd ..
+          wget -O autoconf-2.73.tar.gz https://${{ env.ftp_gnu_org }}/gnu/autoconf/autoconf-2.73.tar.gz
+          tar xfz autoconf-2.73.tar.gz && cd autoconf-2.73 && ./configure --prefix=/usr && make && sudo make install && cd ..
           wget -O automake-1.18.tar.gz https://${{ env.ftp_gnu_org }}/gnu/automake/automake-1.18.tar.gz
           tar xfz automake-1.18.tar.gz && cd automake-1.18 && ./configure --prefix=/usr && make && sudo make install && cd ..
           ./build-tarball.sh '${{ env.package }}'
