@@ -863,7 +863,7 @@ jobs:
   check-sanitized:
     name: make check with sanitizers
     needs: build-tarball
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     steps:
       # This is needed because we run a script stored in this repository.
       - uses: actions/checkout@v4
