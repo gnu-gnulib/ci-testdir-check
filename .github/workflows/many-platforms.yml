@@ -884,6 +884,11 @@ jobs:
       - run: git config --global core.autocrlf input
         shell: cmd
       - uses: actions/checkout@v5
+      # Download the artifact to $GITHUB_WORKSPACE.
+      # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
       # Doc: https://github.com/msys2/setup-msys2
       - uses: msys2/setup-msys2@v2
         with:
