@@ -888,7 +888,7 @@ jobs:
       # Doc: https://github.com/actions/download-artifact?tab=readme-ov-file#usage
       - uses: actions/download-artifact@v4
         with:
-          name: tarball
+          name: tarball-for-mingw
       # Doc: https://github.com/msys2/setup-msys2
       - uses: msys2/setup-msys2@v2
         with:
