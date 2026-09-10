@@ -916,13 +916,14 @@ jobs:
       - run: ${{ matrix.compiler }} -v -v
       - run: echo '#include <stdio.h>' | ${{ matrix.compiler }} -E -dM - | grep UCRT
       - run: echo 'int main () {}' > a.c; ${{ matrix.compiler }} a.c; objdump -p a.exe | grep DLL; rm a.exe
+      # libbacktrace cannot be used on arm64, due to <https://github.com/ianlancetaylor/libbacktrace/issues/175>.
       - name: Build in MSYS2
         run: |
           set -x
           export CPPFLAGS="-Wall"
           export CC=${{ matrix.compiler }}
           export CXX=${{ case(matrix.compiler == 'clang', 'clang++', 'g++') }}
-          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ case(matrix.cpu == 'arm64', 'aarch64', 'x86_64') }}-w64-mingw32' 'make' '${{ case(matrix.cpu == 'arm64', '/clangarm64', matrix.compiler == 'clang', '/clang64', matrix.crt == 'ucrt', '/ucrt64', '/mingw64') }}' 'libbacktrace' ''
+          ./build-on.sh 'testdir-all-for-mingw' '--host=${{ case(matrix.cpu == 'arm64', 'aarch64', 'x86_64') }}-w64-mingw32' 'make' '${{ case(matrix.cpu == 'arm64', '/clangarm64', matrix.compiler == 'clang', '/clang64', matrix.crt == 'ucrt', '/ucrt64', '/mingw64') }}' '${{ case(matrix.cpu == 'arm64', '', 'libbacktrace') }}' ''
       # Doc: https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
       #      https://github.com/actions/upload-artifact?tab=readme-ov-file#usage
       - if: ${{ always() }}
