@@ -409,6 +409,11 @@ jobs:
   check-netbsd:
     name: make check on NetBSD
     needs: build-tarball
+    # Doc: https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [10, 11]
     runs-on: ubuntu-24.04
     steps:
       # This is needed because we run a script stored in this repository.
@@ -421,7 +426,7 @@ jobs:
       # Doc: https://github.com/vmactions/netbsd-vm
       - uses: vmactions/netbsd-vm@v1
         with:
-          release: '11.0'
+          release: '${{ matrix.version }}.0'
           mem: 1024
           usesh: true
           run: |
@@ -445,7 +450,7 @@ jobs:
       - if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: logs-netbsd
+          name: logs-netbsd${{ matrix.version }}
           path: |
             libbacktrace/log[124]
             testdir-all/build/config.cache
