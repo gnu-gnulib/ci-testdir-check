@@ -840,8 +840,8 @@ jobs:
           win32_target=_WIN32_WINNT_WINXP
           export CPPFLAGS="-D_WIN32_WINNT=$win32_target -I/usr/local/msvc${{ matrix.bitness }}/include"
           export LDFLAGS="-L/usr/local/msvc${{ matrix.bitness }}/lib"
-          export CC="`pwd`/compile cl -nologo"; export CFLAGS="-MD"
-          export CXX="`pwd`/compile cl -nologo"; export CXXFLAGS="-MD"
+          export CC="`pwd`/compile cl -nologo"; export CFLAGS="-MD -O2"
+          export CXX="`pwd`/compile cl -nologo"; export CXXFLAGS="-MD -O2"
           export LD="link"
           export NM="dumpbin -symbols"
           export STRIP=":"
