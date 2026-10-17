@@ -794,7 +794,7 @@ jobs:
           platform: x86_64
           # Install Cygwin packages.
           # List of packages: https://cygwin.com/packages/package_list.html
-          packages: wget ${{ matrix.bitness == 32 && 'mingw64-i686-binutils mingw64-i686-gcc-core' || 'mingw64-x86_64-binutils mingw64-x86_64-gcc-core' }} make
+          packages: wget make
       - name: cygcheck
         run: cygcheck -V
       - name: cygcheck
@@ -829,6 +829,9 @@ jobs:
           WindowsSdkLibDir='C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\'
           INCLUDE="${WindowsSdkIncludeDir}um;${WindowsSdkIncludeDir}shared;$INCLUDE"
           LIB="${WindowsSdkLibDir}${arch};$LIB"
+          : "Windows tools."
+          WindowsSdkBinDir='C:\Program Files (x86)\Windows Kits\8.1\bin\'
+          PATH=`cygpath -u "${WindowsSdkBinDir}${arch}"`:"$PATH"
           : "Visual C++ tools, headers and libraries."
           VSINSTALLDIR='C:\Program Files (x86)\Microsoft Visual Studio 14.0'
           VCINSTALLDIR="${VSINSTALLDIR}"'\VC'
