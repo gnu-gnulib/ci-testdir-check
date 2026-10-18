@@ -46,7 +46,7 @@ env:
   gnulib_url_prefix: https://raw.githubusercontent.com/coreutils/gnulib/refs/heads/master/
   # Mirror of ftp.gnu.org
   ftp_gnu_org: mirrors.ocf.berkeley.edu
-  alpha.gnu.org: alpha.gnu.org
+  alpha_gnu_org: alpha.gnu.org
 
 jobs:
   build-tarball:
